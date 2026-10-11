@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@arab-kids-code/shared": ["../../packages/shared/dist/index.d.ts"]
+      "@arab-kids-code/shared": ["../../packages/shared/dist"],
+      "@arab-kids-code/shared/*": ["../../packages/shared/dist/*"]
     }
   },
   "include": ["src/**/*"]
