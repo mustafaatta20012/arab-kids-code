@@ -15,6 +15,7 @@
     "build:shared": "npm run build --workspace=packages/shared",
     "build:api": "npm run build --workspace=apps/api",
     "build:web": "npm run build --workspace=apps/web",
+    "postinstall": "npm run build:shared",
     "lint": "npm run lint --workspaces",
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm run test --workspaces",
