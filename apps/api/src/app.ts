@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env';
+import { connectDatabase } from './config/database';
 import authRoutes from './modules/auth/auth.routes';
 import publicRoutes from './modules/public/public.routes';
 import lessonRoutes from './modules/lessons/lesson.routes';
@@ -81,32 +82,34 @@ export const createApp = (): Express => {
     setupSwagger(app);
   }
 
-  // 6. Production Health Check & Monitoring Endpoints (Excluded from rate limit)
-  app.get('/health', (_req: Request, res: Response) => {
-    res.status(200).json({
-      status: 'ok',
-      service: 'Arab Kids Code API',
-      env: env.NODE_ENV,
-      uptimeSeconds: Math.floor(process.uptime()),
-      timestamp: new Date().toISOString(),
-    });
+  // Ensure DB connection on any request (critical for serverless cold starts)
+  app.use(async (_req, _res, next) => {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.error('Database connection error in middleware:', err);
+    }
+    next();
   });
 
-  app.get(`${env.API_PREFIX}/health`, (_req: Request, res: Response) => {
-    res.status(200).json({
-      status: 'ok',
-      service: 'Arab Kids Code API',
-      version: '1.0.0',
-      uptimeSeconds: Math.floor(process.uptime()),
-      timestamp: new Date().toISOString(),
+  // 6. Production Health Check & Monitoring Endpoints (Excluded from rate limit)
+  for (const healthPath of ['/health', '/api/health', '/api/v1/health', '/v1/health']) {
+    app.get(healthPath, (_req: Request, res: Response) => {
+      res.status(200).json({
+        status: 'ok',
+        service: 'Arab Kids Code API',
+        env: env.NODE_ENV,
+        uptimeSeconds: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+      });
     });
-  });
+  }
 
   // 7. Global API Rate Limiting
   app.use(env.API_PREFIX, apiLimiter);
 
-  // 8. API Domain Routes (Supporting both /api/v1 and /v1 for Vercel routing compatibility)
-  for (const prefix of ['/api/v1', '/v1']) {
+  // 8. API Domain Routes (Supporting /api/v1, /v1, and root for all reverse proxy setups)
+  for (const prefix of ['/api/v1', '/v1', '']) {
     app.use(`${prefix}/auth`, authRoutes);
     app.use(`${prefix}/public`, publicRoutes);
     app.use(`${prefix}/lessons`, lessonRoutes);
