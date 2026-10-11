@@ -1,0 +1,48 @@
+{
+  "name": "arab-kids-code-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Arab Kids Code - Production Full-Stack Educational Platform (RTL)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --parallel",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=packages/shared",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "lint": "npm run lint --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run test --workspaces",
+    "seed": "npm run seed --workspace=apps/api",
+    "seed:admin": "npm run seed:admin --workspace=apps/api",
+    "export:data": "npm run export:data --workspace=apps/api",
+    "import:data": "npm run import:data --workspace=apps/api",
+    "migrate": "npm run migrate --workspace=apps/api",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.1",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  }
+}

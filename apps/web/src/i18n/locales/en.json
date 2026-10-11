@@ -1,0 +1,55 @@
+{
+  "common": {
+    "skipToContent": "Skip to main content"
+  },
+  "nav": {
+    "home": "Home",
+    "freeLesson": "Free Lesson",
+    "curriculum": "Curriculum",
+    "instructor": "Instructor",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "login": "Login",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "hero": {
+    "badge": "✨ #1 Interactive Scratch Coding Course for Kids",
+    "title": "Coding & Game Design in Your Child's Hands",
+    "subtitle": "A fun journey from zero to hero to build real games and logical thinking for kids aged 6–14 with Eng. Mustafa Atta",
+    "tryFreeBtn": "🚀 Try Lesson 1 Free",
+    "subscribeBtn": "⭐ Enroll Full Course",
+    "stats": {
+      "lessons": "30+ Lessons",
+      "projects": "50+ Projects",
+      "arabic": "100% Arabic Content",
+      "ages": "Ages 6–14"
+    }
+  },
+  "instructor": {
+    "title": "Meet Your Instructor",
+    "name": "Eng. Mustafa Atta",
+    "bio": "Software engineer and kids coding mentor who taught hundreds of children across Egypt & MENA region.",
+    "phone": "+201101587881",
+    "whatsapp": "Chat on WhatsApp"
+  },
+  "reviews": {
+    "title": "What Parents & Kids Say",
+    "subtitle": "Real reviews from our community",
+    "addReview": "✍️ Add Your Review"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "Does my child need prior coding experience?",
+    "a1": "Not at all! The course starts from absolute zero with child-friendly fun explanations.",
+    "q2": "What age group is this course for?",
+    "a2": "Specially designed for children aged 6 to 14.",
+    "q3": "Can we try a lesson before subscribing?",
+    "a3": "Yes! Lesson 1 is completely free to try right away.",
+    "q4": "How do children follow lessons?",
+    "a4": "HD video lessons with embedded Scratch environment, quizzes, and teacher feedback."
+  },
+  "footer": {
+    "rights": "All rights reserved © Arab Kids Code - Eng. Mustafa Atta"
+  }
+}

@@ -1,0 +1,6 @@
+# robots.txt for https://arab-kids-code.web.app/
+User-agent: *
+Allow: /
+
+# Sitemap Location
+Sitemap: https://arab-kids-code.web.app/sitemap.xml

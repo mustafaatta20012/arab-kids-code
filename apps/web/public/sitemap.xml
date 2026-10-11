@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- الرئيسية -->
+  <url>
+    <loc>https://arabkidscode.com/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://arabkidscode.com/images/logo.png</image:loc>
+      <image:title>كود أطفال العرب - Arab Kids Code</image:title>
+      <image:caption>منصة تعليم البرمجة وتصميم الألعاب للأطفال مع المهندس مصطفى عطا</image:caption>
+    </image:image>
+  </url>
+
+  <!-- الحصة المجانية الأولى -->
+  <url>
+    <loc>https://arabkidscode.com/lessons/free</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- المنهج التعليمي (30 درساً) -->
+  <url>
+    <loc>https://arabkidscode.com/curriculum</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- عن المحاضر م. مصطفى عطا -->
+  <url>
+    <loc>https://arabkidscode.com/instructor</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arabkidscode.com/images/engMustafa.jpg</image:loc>
+      <image:title>المهندس مصطفى عطا - مدرب ومحاضر البرمجة للأطفال</image:title>
+    </image:image>
+  </url>
+
+  <!-- خطط الأسعار والاشتراك -->
+  <url>
+    <loc>https://arabkidscode.com/pricing</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- التواصل والدعم -->
+  <url>
+    <loc>https://arabkidscode.com/contact</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- سياسة الخصوصية وأمان الأطفال -->
+  <url>
+    <loc>https://arabkidscode.com/privacy</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>

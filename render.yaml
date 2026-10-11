@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: arab-kids-code-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install && npm run build:shared && npm run build:api
+    startCommand: node apps/api/dist/index.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLIENT_URL
+        value: https://arab-kids-code.web.app
+      - key: ALLOWED_ORIGINS
+        value: https://arab-kids-code.web.app,https://arab-kids-code.firebaseapp.com
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: COOKIE_SECRET
+        generateValue: true
+      - key: INSTRUCTOR_NAME
+        value: "م. مصطفى عطا"
+      - key: INSTRUCTOR_PHONE
+        value: "+201101587881"
+      - key: INSTRUCTOR_WHATSAPP
+        value: "+201101587881"

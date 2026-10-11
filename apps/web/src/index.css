@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-canvas: 248 250 252;          /* #f8fafc slate-50 */
+    --bg-surface: 255 255 255;         /* #ffffff white */
+    --bg-surface-elevated: 241 245 249;/* #f1f5f9 slate-100 */
+    --bg-surface-muted: 248 250 252;   /* #f8fafc */
+    --border-subtle: 226 232 240;      /* #e2e8f0 slate-200 */
+    --border-strong: 203 213 225;      /* #cbd5e1 slate-300 */
+    --text-primary: 15 23 42;          /* #0f172a slate-900 */
+    --text-secondary: 71 85 105;       /* #475569 slate-600 */
+    --text-muted: 100 116 139;         /* #64748b slate-500 */
+    --ring-brand: 2 132 199;           /* #0284c7 sky-600 */
+    color-scheme: light;
+  }
+
+  .dark {
+    --bg-canvas: 11 15 25;             /* #0b0f19 deep obsidian slate */
+    --bg-surface: 17 24 39;            /* #111827 rich dark slate-900 */
+    --bg-surface-elevated: 30 41 59;   /* #1e293b elevated slate-800 */
+    --bg-surface-muted: 24 33 47;      /* #18212f card muted */
+    --border-subtle: 30 41 59;         /* #1e293b dark border */
+    --border-strong: 51 65 85;         /* #334155 dark active border */
+    --text-primary: 248 250 252;       /* #f8fafc light text */
+    --text-secondary: 203 213 225;      /* #cbd5e1 soft text */
+    --text-muted: 148 163 184;         /* #94a3b8 muted text */
+    --ring-brand: 56 189 248;          /* #38bdf8 sky-400 */
+    color-scheme: dark;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    background-color: rgb(var(--bg-canvas));
+    color: rgb(var(--text-primary));
+    @apply font-cairo min-h-screen transition-colors duration-200 antialiased;
+  }
+
+  /* Universal high-accessibility focus visible styling */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-sky-500 dark:ring-sky-400 ring-offset-2 ring-offset-white dark:ring-offset-slate-900;
+  }
+}
+
+@layer components {
+  /* Design System Card Component */
+  .ui-card {
+    background-color: rgb(var(--bg-surface));
+    border: 1px solid rgb(var(--border-subtle));
+    @apply rounded-3xl transition-all duration-200 shadow-sm dark:shadow-none;
+  }
+
+  .ui-card-hover {
+    @apply ui-card hover:shadow-xl hover:-translate-y-0.5 hover:border-sky-300 dark:hover:border-slate-700;
+  }
+
+  /* Design System Input & Form Field */
+  .ui-input {
+    background-color: rgb(var(--bg-surface));
+    border: 1px solid rgb(var(--border-subtle));
+    color: rgb(var(--text-primary));
+    @apply rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Button Tokens */
+  .ui-button-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-black text-sm shadow-md shadow-sky-500/20 hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .ui-button-secondary {
+    background-color: rgb(var(--bg-surface));
+    border: 1px solid rgb(var(--border-subtle));
+    color: rgb(var(--text-primary));
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95 shadow-sm;
+  }
+}
+
+/* RTL Helpers */
+.rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}

@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /lessons/free
+Allow: /curriculum
+Allow: /instructor
+Allow: /pricing
+Allow: /contact
+Allow: /privacy
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /student
+Disallow: /student/*
+Disallow: /parent
+Disallow: /parent/*
+Disallow: /lessons/lesson-*
+Disallow: /api/*
+
+Sitemap: https://arabkidscode.com/sitemap.xml

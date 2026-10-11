@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تعليم البرمجة للأطفال والناشئين باللغة العربية | م. مصطفى عطا</title>
+  <meta name="description" content="أفضل منصة تفاعلية لتعليم البرمجة للأطفال والناشئين من 6 إلى 14 سنة باللغة العربية. تعلم سكراتش وتصميم الألعاب الذكية بإشراف م. مصطفى عطا.">
+  <meta name="keywords" content="تعليم البرمجة للأطفال, سكراتش للأطفال, كورس برمجة أطفال, تعليم البرمجة باللغة العربية, دورات برمجة للأطفال, Scratch kids, م مصطفى عطا">
+  <meta name="author" content="المهندس مصطفى عطا">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://arab-kids-code.web.app/">
+
+  <!-- الأيقونة الرسمية للموقع Favicons -->
+  <link rel="icon" type="image/png" href="images/icon_search_scratch.png">
+  <link rel="shortcut icon" type="image/png" href="images/icon_search_scratch.png">
+  <link rel="apple-touch-icon" href="images/icon_search_scratch.png">
+
+  <!-- وسوم Open Graph للمشاركة -->
+  <meta property="og:site_name" content="منصة تعليم البرمجة للأطفال | م. مصطفى عطا">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://arab-kids-code.web.app/">
+  <meta property="og:title" content="تعليم البرمجة للأطفال والناشئين باللغة العربية | م. مصطفى عطا">
+  <meta property="og:description" content="أفضل منصة تفاعلية لتعليم البرمجة للأطفال والناشئين من 6 إلى 14 سنة باللغة العربية. تعلم سكراتش وتصميم الألعاب الذكية بإشراف م. مصطفى عطا.">
+  <meta property="og:image" content="https://arab-kids-code.web.app/images/arab-kids-code-online-scratch-programming-classes.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-light: #A855F7;
+      --secondary: #06B6D4;
+      --accent: #F59E0B;
+      --accent-red: #EF4444;
+      --green: #10B981;
+      --bg-dark: #070412;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #FFFFFF;
+      --text-soft: rgba(255, 255, 255, 0.75);
+      --font: 'Cairo', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      direction: rtl;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .app-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 20px 60px;
+    }
+
+    /* 1. TOP BAR: LOGO IMAGE + COMPUTER ICON + "تعليم البرمجة للأطفال" + LOGIN BUTTONS */
+    header.top-header {
+      position: sticky;
+      top: 12px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(13, 8, 36, 0.85);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 12px 24px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(124, 58, 237, 0.15);
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .logo-img-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .site-logo-img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(124, 58, 237, 0.4));
+      transition: transform 0.3s ease;
+    }
+
+    .site-logo-img:hover {
+      transform: scale(1.03);
+    }
+
+    .logo-text-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+      padding-right: 12px;
+    }
+
+    .logo-computer-icon {
+      font-size: 22px;
+    }
+
+    .logo-title-text {
+      font-size: 18px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFFFFF, var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+    }
+
+    .header-auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-login-student, .btn-admin {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 14px;
+      font-family: var(--font);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-login-student {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(6, 182, 212, 0.4));
+      border-color: var(--primary-light);
+    }
+
+    .btn-login-student:hover {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+    }
+
+    .btn-admin {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--accent);
+    }
+
+    .btn-admin:hover {
+      background: rgba(245, 158, 11, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #34D399;
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #F87171;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-logout:hover { background: rgba(239, 68, 68, 0.3); }
+
+    /* 2. HERO MARKETING SECTION: SINGLE VIDEO (NO POSTER) + SEO PARAGRAPH */
+    .hero-marketing-section {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.28), rgba(6, 182, 212, 0.18));
+      border: 1px solid rgba(124, 58, 237, 0.4);
+      border-radius: 28px;
+      padding: 36px 28px;
+      backdrop-filter: blur(15px);
+      margin-bottom: 50px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .video-card-box {
+      background: rgba(13, 8, 36, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 12px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .video-player-element {
+      width: 100%;
+      border-radius: 14px;
+      outline: none;
+      background: #000;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      aspect-ratio: 16/9;
+    }
+
+    .video-caption-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--secondary);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .hero-content-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: right;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .hero-main-title {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.35;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #FFFFFF 30%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-seo-text {
+      font-size: 14px;
+      color: var(--text-soft);
+      line-height: 1.8;
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+
+    .hero-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+
+    .feature-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--secondary);
+      transform: translateY(-3px);
+    }
+
+    .bullet-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    /* Platform Trust & Statistics Bar */
+    .stats-bar-section {
+      margin-bottom: 50px;
+    }
+
+    .stats-grid-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      background: rgba(13, 8, 36, 0.7);
+      border: 1px solid var(--navy-border, rgba(124, 58, 237, 0.3));
+      border-radius: 24px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), #FFFFFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-soft);
+      margin-top: 4px;
+    }
+
+    .btn-free-lesson-hero {
+      background: linear-gradient(135deg, var(--green), var(--secondary));
+      color: white;
+      padding: 14px 32px;
+      border-radius: 16px;
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-free-lesson-hero:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 12px 35px rgba(16, 185, 129, 0.65);
+    }
+
+    /* Multi-Child Parent Dashboard */
+    .parent-child-dashboard {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(124, 58, 237, 0.15));
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 20px;
+      padding: 18px 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .child-switcher-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .child-select-input {
+      background: #0D0824;
+      border: 1px solid var(--secondary);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .progress-track-wrapper { flex: 1; min-width: 220px; }
+
+    .progress-track-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--secondary);
+      margin-bottom: 6px;
+    }
+
+    .progress-track-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+
+    .progress-track-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), var(--green));
+      border-radius: 50px;
+      transition: width 0.5s ease;
+    }
+
+    /* SECTION HEADERS & CONTENT */
+    .section-title-head {
+      font-size: 26px;
+      font-weight: 900;
+      color: white;
+      text-align: center;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-bottom: 60px;
+    }
+
+    .card-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-item::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0.7;
+    }
+
+    .card-item:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 50px;
+    }
+
+    .lesson-badge { background: rgba(124, 58, 237, 0.2); color: var(--primary-light); border: 1px solid rgba(124, 58, 237, 0.4); }
+    .free-badge { background: rgba(16, 185, 129, 0.2); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    .card-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      color: white;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 16px;
+      margin-top: auto;
+    }
+
+    .card-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .btn-enter {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-enter:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5);
+    }
+
+    .btn-lock {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-lock:hover {
+      background: rgba(245, 158, 11, 0.35);
+      transform: scale(1.03);
+    }
+
+    .card-locked { opacity: 0.8; }
+
+    /* TESTIMONIALS SECTION */
+    .testimonials-section {
+      margin-bottom: 60px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 22px;
+      transition: all 0.3s;
+    }
+
+    .testimonial-card:hover {
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-3px);
+    }
+
+    .testimonial-stars { color: #F59E0B; font-size: 16px; margin-bottom: 8px; }
+    .testimonial-text { font-size: 13px; color: rgba(255,255,255,0.88); line-height: 1.7; margin-bottom: 14px; }
+    .testimonial-author { font-size: 13px; font-weight: 800; color: var(--secondary); }
+
+    /* FOOTER WITH SOCIAL MEDIA ICONS ONLY */
+    footer.icons-only-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 36px;
+      margin-top: 60px;
+    }
+
+    .social-icons-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .social-icon-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .social-icon-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .social-icon-btn:hover {
+      transform: translateY(-4px) scale(1.1);
+    }
+
+    .social-whatsapp {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border-color: rgba(37, 211, 102, 0.4);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+
+    .social-facebook {
+      background: linear-gradient(135deg, #1877F2, #0056b3);
+      border-color: rgba(24, 119, 242, 0.4);
+      box-shadow: 0 6px 20px rgba(24, 119, 242, 0.4);
+    }
+
+    .social-instagram {
+      background: linear-gradient(135deg, #E4405F, #833AB4);
+      border-color: rgba(228, 64, 95, 0.4);
+      box-shadow: 0 6px 20px rgba(228, 64, 95, 0.4);
+    }
+
+    .social-phone {
+      background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .social-privacy {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--accent);
+    }
+
+    .footer-rights-mini {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 600;
+    }
+
+    /* MODAL OVERLAYS */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(5, 3, 14, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: #0D0824;
+      border: 2px solid rgba(124, 58, 237, 0.35);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 540px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 30px rgba(124, 58, 237, 0.2);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px; left: 20px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: white;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #F87171;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .form-group { margin-bottom: 18px; text-align: right; }
+    .form-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: rgba(255,255,255,0.9); }
+    
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: white;
+      font-family: var(--font);
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+    }
+
+    .alert-msg {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #F87171;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: none;
+      text-align: right;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #34D399;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: none;
+      text-align: center;
+    }
+
+    .btn-submit-action {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(124,58,237,0.3);
+    }
+
+    .btn-submit-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(124,58,237,0.5);
+    }
+
+    .students-table-box {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .students-table-box th {
+      background: rgba(255,255,255,0.08);
+      color: var(--accent);
+      padding: 10px;
+      text-align: right;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .students-table-box td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+    }
+
+    .btn-del-student {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #F87171;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* GLOBAL FLEX SHRINK & TOUCH TARGET ACCESSIBILITY ENFORCEMENT */
+    .bullet-icon, .site-logo-img, .logo-computer-icon, .modal-close, .user-badge {
+      flex-shrink: 0;
+    }
+    .btn-login-student, .btn-admin, .btn-free-lesson-hero, .btn-enter, .btn-lock, .btn-submit-action, .social-icon-btn {
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    /* UNIVERSAL RESPONSIVE BREAKPOINTS & FLUID MEDIA QUERIES */
+
+    /* 1. LARGE DESKTOP & 4K (1440px and above) */
+    @media (min-width: 1440px) {
+      .app-container { max-width: 1360px; padding: 24px 32px 90px; }
+      .hero-main-title { font-size: 32px; }
+      .content-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    }
+
+    /* 2. STANDARD DESKTOP (1200px to 1439px) */
+    @media (max-width: 1439px) and (min-width: 1200px) {
+      .app-container { max-width: 1240px; padding: 20px 24px 80px; }
+      .hero-main-title { font-size: 28px; }
+      .content-grid { grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    }
+
+    /* 3. TABLET LANDSCAPE / SMALL LAPTOP (992px to 1199px) */
+    @media (max-width: 1199px) and (min-width: 992px) {
+      .app-container { max-width: 980px; padding: 18px 20px 60px; }
+      .hero-grid-container { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .hero-main-title { font-size: 24px; }
+      .content-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    }
+
+    /* 4. TABLET PORTRAIT (768px to 991px) */
+    @media (max-width: 991px) and (min-width: 768px) {
+      header.top-header { justify-content: space-between; padding: 12px 18px; }
+      .hero-grid-container { grid-template-columns: 1fr; gap: 24px; }
+      .hero-content-col { align-items: center; text-align: center; }
+      .hero-main-title { font-size: 24px; }
+      .hero-features-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .stats-grid-container { grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 18px; }
+      .content-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .parent-child-dashboard { flex-direction: row; align-items: center; justify-content: space-between; }
+    }
+
+    /* 5. STANDARD MOBILE (429px to 767px) */
+    @media (max-width: 767px) and (min-width: 429px) {
+      html, body { overflow-x: hidden; }
+      .app-container { padding: 12px 14px 50px; }
+      header.top-header { padding: 10px 14px; gap: 10px; }
+      .header-auth-buttons { width: 100%; justify-content: center; gap: 10px; }
+      .btn-login-student, .btn-admin { flex: 1; min-height: 44px; justify-content: center; font-size: 13px; }
+      .hero-grid-container { grid-template-columns: 1fr; gap: 20px; }
+      .hero-content-col { align-items: center; text-align: center; }
+      .hero-main-title { font-size: 20px; line-height: 1.4; }
+      .hero-features-grid { grid-template-columns: 1fr; gap: 10px; }
+      .stats-grid-container { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
+      .hero-marketing-section { padding: 22px 16px; border-radius: 20px; }
+      .content-grid { grid-template-columns: 1fr; gap: 16px; }
+      .testimonials-grid { grid-template-columns: 1fr; gap: 16px; }
+      .modal-card { max-width: 92vw; padding: 22px 18px; border-radius: 18px; }
+    }
+
+    /* 6. SMALL MOBILE (320px to 428px) */
+    @media (max-width: 428px) {
+      html, body { overflow-x: hidden; }
+      .app-container { padding: 8px 10px 45px; }
+      header.top-header { padding: 10px 12px; border-radius: 16px; margin-bottom: 20px; }
+      .logo-img-wrapper { width: 100%; justify-content: center; margin-bottom: 4px; }
+      .site-logo-img { height: 36px; }
+      .logo-text-box { border-right: none; padding-right: 0; }
+      .logo-title-text { font-size: 14px; }
+      .header-auth-buttons { width: 100%; flex-direction: row; gap: 8px; }
+      .btn-login-student, .btn-admin {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 12px;
+        min-height: 44px;
+        white-space: nowrap;
+      }
+      .hero-marketing-section { padding: 16px 12px; border-radius: 16px; margin-bottom: 30px; }
+      .video-card-box { padding: 8px; border-radius: 16px; }
+      .hero-main-title { font-size: 17px; line-height: 1.45; text-align: center; }
+      .hero-seo-text { font-size: 12px; line-height: 1.75; text-align: right; }
+      .hero-features-grid { grid-template-columns: 1fr; gap: 10px; }
+      .stats-grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
+      .stat-number { font-size: 22px; }
+      .stat-label { font-size: 11px; }
+      .hero-badge { font-size: 11px; padding: 4px 10px; max-width: 100%; text-align: center; }
+      .btn-free-lesson-hero { width: 100%; justify-content: center; font-size: 14px; padding: 12px; min-height: 48px; }
+      .content-grid { grid-template-columns: 1fr; gap: 14px; }
+      .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
+      .card-item { padding: 16px; border-radius: 16px; }
+      .modal-card { width: 94vw; max-width: 94vw; padding: 18px 14px; border-radius: 16px; }
+      .form-input { padding: 10px 12px; font-size: 13px; }
+      .social-icons-row { gap: 10px; }
+      .social-icon-btn { width: 44px; height: 44px; }
+      .students-table-box { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+
+    /* 7. ULTRA NARROW MOBILE (320px and below) */
+    @media (max-width: 340px) {
+      .logo-title-text { font-size: 12px; }
+      .site-logo-img { height: 30px; }
+      .btn-login-student, .btn-admin { font-size: 11px; padding: 6px 8px; }
+      .hero-main-title { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars"></div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+
+    <!-- 1. TOP BAR: LOGO IMAGE + COMPUTER ICON + "تعليم البرمجة للأطفال" + LOGIN BUTTONS -->
+    <header class="top-header">
+      <a href="#" class="logo-img-wrapper">
+        <img src="images/logo.png" alt="شعار منصة تعليم البرمجة للأطفال - المهندس مصطفى عطا" class="site-logo-img" decoding="async" width="160" height="48">
+        <div class="logo-text-box">
+          <span class="logo-computer-icon">💻</span>
+          <h1 class="logo-title-text">تعليم البرمجة للأطفال</h1>
+        </div>
+      </a>
+
+      <div class="header-auth-buttons">
+        <div id="user-logged-badge" class="user-badge" style="display:none;">
+          <span>👤 أهلاً</span>
+          <span id="user-student-name" style="color:#fff;">طالب</span>
+          <button class="btn-logout" onclick="logoutStudent()">خروج 🚪</button>
+        </div>
+
+        <button class="btn-login-student" id="btn-login-trigger" onclick="openStudentLoginModal()">
+          <span>🔑</span> الدخول كـ مشترك
+        </button>
+
+        <button class="btn-admin" onclick="openTeacherModal()">
+          <span>👨‍🏫</span> الدخول كـ معلم
+        </button>
+      </div>
+    </header>
+
+    <!-- Multi-Child Parent Dashboard Bar (Appears when Logged-in) -->
+    <div id="parent-multi-child-bar" class="parent-child-dashboard" style="display:none;">
+      <div class="child-switcher-box">
+        <span>👤 ولي الأمر: <strong id="parent-account-name" style="color:white;">-</strong></span>
+        <span>👶 اختر الطفل:</span>
+        <select id="child-profile-select" class="child-select-input" onchange="switchActiveChildProfile(this.value)">
+          <!-- Rendered dynamically -->
+        </select>
+      </div>
+      <div class="progress-track-wrapper">
+        <div class="progress-track-label">
+          <span>📊 نسبة إنجاز (<span id="active-child-display-name">طالب</span>)</span>
+          <span id="active-child-progress-text">1 من 30 حصة (3%)</span>
+        </div>
+        <div class="progress-track-bg">
+          <div id="active-child-progress-bar" class="progress-track-fill" style="width: 3.33%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. HERO MARKETING SECTION: SINGLE VIDEO (NO POSTER) + SEO MARKETING PARAGRAPH -->
+    <section class="hero-marketing-section">
+      <div class="hero-grid-container">
+
+        <!-- COLUMN 1: SINGLE VIDEO PLAYER (NO POSTER IMAGE) -->
+        <div class="hero-video-col">
+          <div class="video-card-box">
+            <video controls preload="none" class="video-player-element">
+              <source src="images/النظام_الثنائي.mp4" type="video/mp4">
+              متصفحك لا يدعم تشغيل الفيديو.
+            </video>
+            <div class="video-caption-title">💻 شاهد بالفيديو: شرح ممتع لمفهوم النظام الثنائي والبرمجة للأطفال</div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: SEO-OPTIMIZED MARKETING CONTENT & FREE LESSON BUTTON -->
+        <div class="hero-content-col">
+          <div class="hero-badge">
+            <span>🏆</span>
+            <span>المنصة الأولى لتعليم سكراتش وتصميم الألعاب باللغة العربية</span>
+          </div>
+
+          <h2 class="hero-main-title">
+            أفضل كورس لتعليم البرمجة وتصميم الألعاب للأطفال والناشئين
+          </h2>
+
+          <p class="hero-seo-text">
+            مرحباً بكم في منصة <strong>تعليم البرمجة للأطفال</strong> والناشئين من عمر 6 إلى 14 سنة باللغة العربية. تحت إشراف متميز ومباشر من <strong>المهندس مصطفى عطا</strong>، نقدم سلسلة دروس تفاعلية شاملة تعتمد على البرمجة المرئية ببيئة <strong>Scratch</strong> العالمية من MIT، لتطوير مهارات التفكير المنطقي وصناعة ألعاب فيديو حقيقية.
+          </p>
+
+          <div class="hero-features-grid">
+            <div class="feature-card">
+              <span class="bullet-icon">🧠</span>
+              <span><strong>تنمية التفكير المنطقي:</strong> تدريب على حل المشكلات والتفكير الابتكاري.</span>
+            </div>
+            <div class="feature-card">
+              <span class="bullet-icon">🎮</span>
+              <span><strong>ابتكار ألعاب حقيقية:</strong> تحويل وقت الشاشات إلى صناعة ألعاب ذكية.</span>
+            </div>
+            <div class="feature-card">
+              <span class="bullet-icon">👨‍🏫</span>
+              <span><strong>إشراف ومتابعة دورية:</strong> توجيه مباشر مع المهندس مصطفى عطا.</span>
+            </div>
+          </div>
+
+          <div class="hero-cta-wrapper">
+            <a href="lesson1.html" class="btn-free-lesson-hero">
+              <span>🎁</span>
+              <span>حصة مجانية (ابدأ الآن)</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- NEW 3. PLATFORM TRUST & STATISTICS BAR -->
+    <section class="stats-bar-section">
+      <div class="stats-grid-container">
+        <div class="stat-card">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">حصة برمجية تفاعلية</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">مشروع لعبة ومبتكر</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">محتوى عربي مبسط للأطفال</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">6 - 14</div>
+          <div class="stat-label">سنة الفئة العمرية المفتوحة</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. LESSONS SECTION BELOW -->
+    <section id="lessons-section">
+      <h2 class="section-title-head">
+        <span>📚</span>
+        <span>سلسلة الحصص البرمجية (30 حصة)</span>
+      </h2>
+
+      <div class="content-grid" id="main-grid-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- 4. REVIEWS & TESTIMONIALS SECTION BELOW -->
+    <section id="testimonials-section" class="testimonials-section">
+      <h2 class="section-title-head">
+        <span>💬</span>
+        <span>آراء وانطباعات أولياء الأمور والطلاب</span>
+      </h2>
+
+      <div class="testimonials-grid" id="testimonials-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- SUBMIT REVIEW FORM -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:24px;border-radius:20px;margin-top:24px;">
+        <h4 style="font-size:16px;font-weight:800;color:var(--accent);margin-bottom:12px;">✍️ شاركنا رأيك وتجربة ابنك في المنصة:</h4>
+        <div class="alert-success" id="testimonial-success-alert">تم إرسال تقييمك بنجاح! سيظهر على المنصة فور مراجعة المعلم. 🎉</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <input type="text" id="review-author" class="form-input" placeholder="اسمك والبلد (مثال: أم عبد الله - الرياض)">
+          <select id="review-rating" class="form-input" style="background:#0D0824;">
+            <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐ (ممتاز جداً 5/5)</option>
+            <option value="⭐⭐⭐⭐">⭐⭐⭐⭐ (ممتاز 4/5)</option>
+          </select>
+        </div>
+        <textarea id="review-text" class="form-input" style="height:80px;resize:none;" placeholder="اكتب انطباعك ورأيك في الدورة..."></textarea>
+        <button class="btn-submit-action" style="margin-top:12px;width:auto;padding:10px 24px;" onclick="submitReviewForModeration()">إرسال التقييم 📤</button>
+      </div>
+    </section>
+
+    <!-- 5. FOOTER: SOCIAL MEDIA ICONS ONLY (NO TEXT) -->
+    <footer class="icons-only-footer">
+      <div class="social-icons-row">
+
+        <!-- WHATSAPP ICON -->
+        <a href="https://wa.me/201101587881?text=السلام%20عليكم،%20أريد%20الاستفسار%20عن%20كورس%20البرمجة%20للأطفال" target="_blank" rel="noopener" class="social-icon-btn social-whatsapp" title="واتساب" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24">
+            <path d="M12.031 2c-5.514 0-9.998 4.484-9.998 9.998 0 1.761.459 3.479 1.33 4.996l-1.413 5.161 5.279-1.385c1.455.794 3.093 1.226 4.802 1.226 5.514 0 9.998-4.484 9.998-9.998 0-5.514-4.484-9.998-9.998-9.998zm6.009 14.455c-.252.71-1.25 1.3-1.722 1.384-.472.083-1.077.117-3.484-.877-2.909-1.203-4.771-4.156-4.917-4.35-.145-.195-1.182-1.573-1.182-2.999 0-1.426.747-2.128 1.012-2.417.265-.289.578-.361.771-.361.193 0 .385.002.553.01.181.008.423-.069.662.505.241.578.82 2.001.892 2.146.072.145.12.313.024.505-.096.193-.145.313-.289.482-.145.169-.304.378-.435.507-.145.145-.296.302-.127.592.169.289.751 1.238 1.61 2.002 1.104.982 2.036 1.287 2.326 1.432.289.145.458.121.626-.072.169-.193.723-.843.916-1.133.193-.289.385-.241.651-.145.265.096 1.687.795 1.976.94.289.145.482.217.554.337.072.121.072.7-.18 1.41z"/>
+          </svg>
+        </a>
+
+        <!-- FACEBOOK ICON -->
+        <a href="https://www.facebook.com/profile.php?id=61592477134761" target="_blank" rel="noopener" class="social-icon-btn social-facebook" title="فيسبوك" aria-label="Facebook">
+          <svg viewBox="0 0 24 24">
+            <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+          </svg>
+        </a>
+
+        <!-- INSTAGRAM ICON -->
+        <a href="https://instagram.com" target="_blank" rel="noopener" class="social-icon-btn social-instagram" title="انستغرام" aria-label="Instagram">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </a>
+
+        <!-- PHONE ICON -->
+        <a href="tel:+201101587881" class="social-icon-btn social-phone" title="الاتصال المباشر" aria-label="Phone">
+          <svg viewBox="0 0 24 24">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1v3.5c0 .55-.45 1-1 1C9.39 21 3 14.61 3 6.5 3 5.95 3.45 5.5 4 5.5H7.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+        </a>
+
+        <!-- PRIVACY POLICY BUTTON -->
+        <button onclick="openPrivacyModal()" class="social-icon-btn social-privacy" title="سياسة الخصوصية" aria-label="Privacy Policy">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8s0 .01 0 0z"/>
+          </svg>
+        </button>
+
+      </div>
+      <div class="footer-rights-mini">© 2026 جميع الحقوق محفوظة · م. مصطفى عطا (+201101587881)</div>
+    </footer>
+
+  </div>
+
+  <!-- MODAL 1: STUDENT LOGIN -->
+  <div class="modal-overlay" id="student-login-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeStudentLoginModal()">✕</button>
+      <div class="modal-title">🔑 دخول الطلاب وأولياء الأمور</div>
+      <div class="modal-subtitle">أدخل اسم الطالب/الولي وكلمة السر الممنوحة لك لدخول الحصص المفعلة.</div>
+      
+      <div class="alert-msg" id="student-login-error">⚠️ اسم المستخدم أو كلمة السر غير صحيحة!</div>
+      
+      <div class="form-group">
+        <label class="form-label">اسم الطالب / الولي</label>
+        <input type="text" id="login-student-name" class="form-input" placeholder="مثال: أحمد علي">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">كلمة السر</label>
+        <input type="password" id="login-student-pass" class="form-input" placeholder="••••••" onkeydown="if(event.key==='Enter') verifyStudentLogin()">
+      </div>
+
+      <button class="btn-submit-action" onclick="verifyStudentLogin()">دخول وتفعيل الحصص 🚀</button>
+    </div>
+  </div>
+
+  <!-- MODAL 2: TEACHER MANDATORY CHANGE PASS -->
+  <div class="modal-overlay" id="mandatory-pass-modal">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-title" style="color:var(--accent-red);">🔒 تغيير كلمة سر المعلم الإجبارية</div>
+      <div class="modal-subtitle">لحماية لوحة التحكم، يرجى تغيير كلمة السر الافتراضية للمعلم قبل المتابعة.</div>
+      
+      <div class="alert-msg" id="mandatory-pass-error"></div>
+      
+      <div class="form-group">
+        <label class="form-label">كلمة السر الجديدة للمعلم</label>
+        <input type="password" id="mandatory-new-pass" class="form-input" placeholder="أدخل كلمة سر قوية">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">تأكيد كلمة السر الجديدة</label>
+        <input type="password" id="mandatory-confirm-pass" class="form-input" placeholder="أعد كتابة كلمة السر">
+      </div>
+
+      <button class="btn-submit-action" style="background:var(--accent);color:#000;" onclick="submitMandatoryPassChange()">حفظ كلمة السر الجديدة والدخول 💾</button>
+    </div>
+  </div>
+
+  <!-- MODAL 3: TEACHER ADMIN PANEL -->
+  <div class="modal-overlay" id="teacher-admin-modal">
+    <div class="modal-card" style="max-width:680px;">
+      <button class="modal-close" onclick="closeTeacherModal()">✕</button>
+      <div class="modal-title">👨‍🏫 لوحة المعلم (إدارة اشتراكات الطلاب)</div>
+      <div class="modal-subtitle">إضافة طلاب/أسر جديدة وتحديد كلمات السر لدخول الحصص.</div>
+      
+      <div class="alert-success" id="teacher-alert-success">تمت العملية بنجاح!</div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);padding:18px;border-radius:16px;margin-bottom:20px;">
+        <div style="font-size:15px;font-weight:800;color:var(--secondary);margin-bottom:12px;">➕ إضافة طالب / حساب ولي أمر جديد:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">اسم الطالب</label>
+            <input type="text" id="new-student-name" class="form-input" placeholder="مثال: علي محمد">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">كلمة السر للطالب</label>
+            <input type="text" id="new-student-pass" class="form-input" placeholder="مثال: 1234">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label class="form-label">اسم الولي (ربط عدة أطفال بنفس الولي):</label>
+          <input type="text" id="new-parent-name" class="form-input" placeholder="مثال: محمد (ولي أمر علي وزياد)">
+        </div>
+        <button class="btn-submit-action" style="margin-top:14px;background:linear-gradient(135deg,var(--green),var(--secondary));" onclick="addStudentToDB()">إضافة الحساب وتشفير كلمة السر ➕</button>
+      </div>
+
+      <div style="font-size:15px;font-weight:800;color:var(--accent);margin-bottom:8px;">📋 قائمة الطلاب المشتركين:</div>
+      <div style="max-height:220px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:12px;border:1px solid rgba(255,255,255,0.1);padding:4px;">
+        <table class="students-table-box">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم الطالب / الولي</th>
+              <th>كلمة السر المشفرة</th>
+              <th>إلغاء الاشتراك</th>
+            </tr>
+          </thead>
+          <tbody id="students-table-body">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group" style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-top:20px;margin-bottom:0;">
+        <label class="form-label">تغيير كلمة سر المعلم</label>
+        <div style="display:flex;gap:10px;">
+          <input type="password" id="new-master-teacher-pass" class="form-input" placeholder="كلمة سر المعلم الجديدة">
+          <button class="btn-submit-action" style="width:150px;font-size:13px;background:var(--accent);color:#000;" onclick="changeMasterTeacherPass()">حفظ وتشفير 💾</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: PRIVACY POLICY -->
+  <div class="modal-overlay" id="privacy-policy-modal">
+    <div class="modal-card" style="max-width:620px;">
+      <button class="modal-close" onclick="closePrivacyModal()">✕</button>
+      <div class="modal-title">🛡️ سياسة الخصوصية وحماية بيانات الأطفال</div>
+      <div class="modal-subtitle">نلتزم في منصة البرمجة للأطفال بأعلى معايير الأمان وحماية خصوصية البيانات:</div>
+      
+      <div style="text-align:right;font-size:13px;line-height:1.8;color:rgba(255,255,255,0.9);max-height:320px;overflow-y:auto;padding-left:10px;">
+        <p><strong>1. البيانات التي نجمعها:</strong> نجمع فقط اسم الطالب، واسم ورقم تواصل ولي الأمر ومستوى التقدم لتفعيل المحتوى وتوفير المتابعة المباشرة.</p>
+        <p><strong>2. حماية البيانات:</strong> يتم تفعيل كلمات السر بالحماية والأمان دون مشاركتها إطلاقاً مع أي جهات خارجية.</p>
+        <p><strong>3. عدم المشاركة:</strong> نلتزم بتعهد قطعي بعدم بيع أو مشاركة أية بيانات تخص أطفالكم مع أي أطراف ثالثة نهائياً.</p>
+        <p><strong>4. التواصل المباشر:</strong> لأي استفسار أو طلب تعديل، يمكنك التواصل مباشرة مع المهندس مصطفى عطا على: <a href="tel:+201101587881" style="color:var(--secondary);">+201101587881</a>.</p>
+      </div>
+
+      <button class="btn-submit-action" style="margin-top:16px;" onclick="closePrivacyModal()">فهمت وأوافق على سياسة الخصوصية 👍</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0uNONbx5w2jGAFPTLjSHI5VKg4WSEP3E",
+      authDomain: "arab-kids-code.firebaseapp.com",
+      projectId: "arab-kids-code",
+      storageBucket: "arab-kids-code.firebasestorage.app",
+      messagingSenderId: "78217320646",
+      appId: "1:78217320646:web:7c2e9b70484563bf939fc7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const functions = getFunctions(app);
+
+    const DB_DOC = doc(db, "academy", "data");
+    const createStudentCallable = httpsCallable(functions, 'createStudentAccount');
+
+    window._auth = auth;
+    window._db = db;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const idTokenResult = await user.getIdTokenResult();
+        window._isTeacher = !!idTokenResult.claims.teacher;
+        window._currentUser = user;
+        localStorage.setItem('academy_logged', 'true');
+        localStorage.setItem('academy_student_name', user.displayName || 'طالب');
+      } else {
+        window._isTeacher = false;
+        window._currentUser = null;
+      }
+      checkStudentLoginState();
+      renderContent();
+    });
+
+    function sanitizeHTML(str) {
+      if (typeof str !== 'string') return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+    window.sanitizeHTML = sanitizeHTML;
+
+    try {
+      window._studentsDB = JSON.parse(localStorage.getItem('academy_students_cache')) || [];
+      window._testimonials = JSON.parse(localStorage.getItem('academy_testimonials_cache')) || [];
+    } catch(e) {
+      window._studentsDB = [];
+      window._testimonials = [];
+    }
+
+    async function loadAcademyData() {
+      try {
+        const snap = await getDoc(DB_DOC);
+        if (snap.exists()) {
+          const data = snap.data();
+          window._studentsDB = data.students || [];
+          window._testimonials = data.testimonials || [];
+          localStorage.setItem('academy_students_cache', JSON.stringify(window._studentsDB));
+        }
+      } catch(e) {
+        console.log("تحميل البيانات المحلية");
+      }
+      checkStudentLoginState();
+      renderContent();
+    }
+
+    async function saveToCloud() {
+      try {
+        await setDoc(DB_DOC, {
+          students: window._studentsDB,
+          testimonials: window._testimonials,
+          updatedAt: new Date().toISOString()
+        });
+      } catch(e) {
+        console.error("خطأ في الحفظ السحابي:", e);
+      }
+    }
+
+    window.saveToCloud = saveToCloud;
+    window.getStudentsDB = () => window._studentsDB || [];
+
+    window.addStudentToDB = async function() {
+      const name = sanitizeHTML(document.getElementById('new-student-name').value.trim());
+      const pass = document.getElementById('new-student-pass').value.trim();
+      const parentName = sanitizeHTML(document.getElementById('new-parent-name').value.trim());
+
+      if (!name || !pass) { alert("يرجى كتابة اسم الطالب وكلمة السر!"); return; }
+
+      try {
+        if (window._currentUser && window._isTeacher) {
+          const res = await createStudentCallable({ studentName: name, password: pass, parentName: parentName });
+          alert(res.data.message || `تم إضافة الطالب (${name}) بنجاح!`);
+        } else {
+          const existing = window._studentsDB.find(s => s.name.toLowerCase() === name.toLowerCase());
+          if (existing) { alert(`الطالب (${name}) موجود مسبقاً!`); return; }
+
+          const passHash = await window.hashPass(pass);
+          window._studentsDB.push({
+            id: 'st_' + Date.now(),
+            name,
+            passHash: passHash,
+            passPlain: pass,
+            parentName: parentName || name,
+            createdAt: new Date().toISOString()
+          });
+          await saveToCloud();
+        }
+
+        document.getElementById('new-student-name').value = '';
+        document.getElementById('new-student-pass').value = '';
+        document.getElementById('new-parent-name').value = '';
+        await loadAcademyData();
+        renderStudentsTable();
+        renderContent();
+
+        const succ = document.getElementById('teacher-alert-success');
+        succ.textContent = `تمت إضافة الطالب (${name}) بنجاح! ➕`;
+        succ.style.display = 'block';
+        setTimeout(() => succ.style.display = 'none', 2500);
+      } catch(err) {
+        alert(err.message || "حدث خطأ أثناء إضافة الطالب.");
+      }
+    };
+
+    window.deleteStudentFromDB = async function(idx) {
+      const student = window._studentsDB[idx];
+      if (confirm(`هل أنت متأكد من إلغاء اشتراك الطالب (${student.name})؟`)) {
+        window._studentsDB.splice(idx, 1);
+        await saveToCloud();
+        renderStudentsTable();
+        renderContent();
+      }
+    };
+
+    window.changeMasterTeacherPass = async function() {
+      const newPass = document.getElementById('new-master-teacher-pass').value.trim();
+      if (!newPass || newPass.length < 6) { alert("يرجى كتابة كلمة سر قوية لا تقل عن 6 أحرف!"); return; }
+
+      window._masterPassHash = await window.hashPass(newPass);
+      window._isDefaultPass = false;
+      await saveToCloud();
+
+      document.getElementById('new-master-teacher-pass').value = '';
+      const succ = document.getElementById('teacher-alert-success');
+      succ.textContent = "تم تغيير كلمة سر المعلم وتشفيرها بنجاح! 💾";
+      succ.style.display = 'block';
+      setTimeout(() => succ.style.display = 'none', 2500);
+    };
+
+    window.onload = function() {
+      loadAcademyData();
+    };
+  </script>
+
+  <script>
+    // ====== Security & Rate Limiting Utility Functions ======
+    async function hashPass(str) {
+      if (!str) return '';
+      const msgBuffer = new TextEncoder().encode(str);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    window.hashPass = hashPass;
+
+    const failedAttemptsMap = { student: [], teacher: [] };
+    window.checkRateLimit = function(type) {
+      const maxAttempts = 5;
+      const lockoutTimeMs = 60 * 1000;
+      const now = Date.now();
+      failedAttemptsMap[type] = (failedAttemptsMap[type] || []).filter(t => now - t < lockoutTimeMs);
+      if (failedAttemptsMap[type].length >= maxAttempts) {
+        const oldest = failedAttemptsMap[type][0];
+        const remaining = Math.ceil((lockoutTimeMs - (now - oldest)) / 1000);
+        return { allowed: false, remainingSeconds: remaining };
+      }
+      return { allowed: true, remainingSeconds: 0 };
+    };
+    window.recordFailedAttempt = function(type) {
+      failedAttemptsMap[type] = failedAttemptsMap[type] || [];
+      failedAttemptsMap[type].push(Date.now());
+    };
+    window.resetFailedAttempts = function(type) {
+      failedAttemptsMap[type] = [];
+    };
+
+    // ====== Application Lessons & Data ======
+    const specificLessons = {
+      1: { title: "مرحباً أيها المبرمج الصغير!", desc: "مقدمة تفاعلية رائعة للكمبيوتر، الثنائي، البكسلات وأول لعبة تفاعلية للقطة واللبن.", url: "lesson1.html", active: true },
+      2: { title: "أول مشروع حركة وتكرار في Scratch", desc: "تعلم التكرار (Loops)، الأحداث (Events)، وتغيير المظاهر والأصوات لبناء أول مشروع متحرك تفاعلي!", url: "lesson2.html", active: true },
+      3: { title: "قوة الحلقات والتكرار في Scratch", desc: "تعلم سر المبرمجين الأذكياء: الحلقات التكرارية (Loops)، واصنع سباق القطط وحفلة الرقص التكرارية بنفسك!", url: "lesson3.html", active: true },
+      4: { title: "اتخاذ القرارات والشرط (If/Else)", desc: "كيف نعطي القطة والروبرت عيناً تعاين وعقلاً يفكر ويقرر بنفسه باستخدام الشروط والاستشعار!", url: "lesson4.html", active: true },
+      5: { title: "المتغيرات وعداد النقاط (Variables)", desc: "ذاكرة اللعبة العجيبة: كيف تحفظ أرقامك القياسية والقلوب والنتيجة وتصنع ألعابك الكاملة بنفسك!", url: "lesson5.html", active: true },
+      6: { title: "الرسائل البثية والتواصل (Broadcast)", desc: "التحدث بين الكائنات: كيف تطلق إشارة سرية لبداية اللعبة، ظهور الوحوش، والانتقال بين المراحل!", url: "lesson6.html", active: true },
+      7: { title: "المظاهر والأنيميشن (Costumes)", desc: "سحر الأنيميشن ورواية القصص: كيف نحول الصور الثابتة إلى رسوم متحركة حية ونحرك أقدام الكائنات!", url: "lesson7.html", active: true },
+      8: { title: "الأصوات والموسيقى (Sound FX)", desc: "صوت اللعبة وهندسة النغمات: كيف تضيف مؤثرات القفز، الكوينز، والموسيقى الحماسية لألعابك!", url: "lesson8.html", active: true },
+      9: { title: "الخلفيات وبناء المستويات (Backdrops)", desc: "عوالم الألعاب وبناء المستويات: كيف تنشئ عوالم كاملة وتنتقل بالبطل بين المزرعة والقلعة والفضاء!", url: "lesson9.html", active: true },
+      10: { title: "المشروع الشامل 1 (Capstone Project)", desc: "المشروع التاجي الأول: دمج المهارات التسع وبناء أول لعبة فيديو متكاملة الميزات مع التاج والنجوم!", url: "lesson10.html", active: true }
+    };
+
+    const defaultTestimonials = [
+      { name: "أم زياد ومريم (الرياض)", stars: "⭐⭐⭐⭐⭐", text: "منصة ممتازة جداً وممتعة! ابني زياد (8 سنوات) تعلّم التفكير المنطقي وسكراتش وأصبح ينفذ ألعابه بنفسه بكل شغف." },
+      { name: "أبو عبدالرحمن (دبي)", stars: "⭐⭐⭐⭐⭐", text: "الشرح مبسط ومباشر. م. مصطفى عطا قدّم المنهج بأسلوب مشجع جداً للأطفال وربط التعليم بالترفيه." },
+      { name: "د. فاطمة (الكويت)", stars: "⭐⭐⭐⭐⭐", text: "أفضل استثمار لوقت أطفالي! المنصة سهلة الاستخدام وموزعة بشكل تدريجي رائع يناسب الفئات العمرية من 6 إلى 14 سنة." }
+    ];
+
+    let activeChildId = localStorage.getItem('academy_active_child_id') || null;
+
+    function checkStudentLoginState() {
+      const isLogged = localStorage.getItem('academy_logged') === 'true' || sessionStorage.getItem('academy_logged') === 'true';
+      const studentName = localStorage.getItem('academy_student_name') || sessionStorage.getItem('academy_student_name') || 'طالب';
+      
+      const badge = document.getElementById('user-logged-badge');
+      const loginBtn = document.getElementById('btn-login-trigger');
+      
+      if (isLogged) {
+        badge.style.display = 'flex';
+        document.getElementById('user-student-name').textContent = studentName;
+        loginBtn.style.display = 'none';
+        renderMultiChildDashboard(studentName);
+      } else {
+        badge.style.display = 'none';
+        loginBtn.style.display = 'flex';
+        document.getElementById('parent-multi-child-bar').style.display = 'none';
+      }
+    }
+
+    function renderMultiChildDashboard(currentAccountName) {
+      const db = window.getStudentsDB ? window.getStudentsDB() : [];
+      const parentBar = document.getElementById('parent-multi-child-bar');
+      const select = document.getElementById('child-profile-select');
+      const parentNameEl = document.getElementById('parent-account-name');
+
+      const linkedChildren = db.filter(st => 
+        (st.parentName && st.parentName.trim().toLowerCase() === currentAccountName.toLowerCase()) ||
+        (st.name && st.name.trim().toLowerCase() === currentAccountName.toLowerCase())
+      );
+
+      if (linkedChildren.length === 0) {
+        parentBar.style.display = 'none';
+        return;
+      }
+
+      parentBar.style.display = 'flex';
+      parentNameEl.textContent = linkedChildren[0].parentName || currentAccountName;
+
+      select.innerHTML = '';
+      linkedChildren.forEach(child => {
+        const unlockedCount = (child.unlockedLessons || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).length;
+        const opt = document.createElement('option');
+        opt.value = child.id || child.name;
+        opt.textContent = `👶 ${child.name} (${unlockedCount} / 30 حصة)`;
+        if (child.id === activeChildId || child.name === activeChildId) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+
+      if (!activeChildId || !linkedChildren.find(c => c.id === activeChildId || c.name === activeChildId)) {
+        activeChildId = linkedChildren[0].id || linkedChildren[0].name;
+        localStorage.setItem('academy_active_child_id', activeChildId);
+      }
+
+      const activeChildObj = linkedChildren.find(c => c.id === activeChildId || c.name === activeChildId) || linkedChildren[0];
+      updateChildProgressBar(activeChildObj);
+    }
+
+    window.switchActiveChildProfile = function(childId) {
+      activeChildId = childId;
+      localStorage.setItem('academy_active_child_id', childId);
+      const studentName = localStorage.getItem('academy_student_name') || sessionStorage.getItem('academy_student_name') || 'طالب';
+      renderMultiChildDashboard(studentName);
+      renderContent();
+    };
+
+    function updateChildProgressBar(childObj) {
+      const unlockedList = childObj.unlockedLessons || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const count = unlockedList.length;
+      const pct = Math.round((count / 30) * 100);
+
+      document.getElementById('active-child-display-name').textContent = childObj.name || 'طالب';
+      document.getElementById('active-child-progress-text').textContent = `${count} من 30 حصة (${pct}%)`;
+      document.getElementById('active-child-progress-bar').style.width = `${pct}%`;
+    }
+
+    function renderContent() {
+      const container = document.getElementById('main-grid-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const isLogged = localStorage.getItem('academy_logged') === 'true' || sessionStorage.getItem('academy_logged') === 'true';
+
+      for(let l = 1; l <= 30; l++) {
+        const isSpecific = specificLessons[l];
+        let title = isSpecific ? isSpecific.title : `الحصة رقم ${l}`;
+        let desc = isSpecific ? isSpecific.desc : `شرح وتصميم تفاعلي احترافي بمستوى عالٍ للطلاب من 6 إلى 14 سنة.`;
+        let active = isSpecific ? isSpecific.active : false;
+        let url = isSpecific ? isSpecific.url : '#';
+
+        const isFreeLesson = (l === 1);
+        const card = document.createElement('div');
+        
+        let actionBtnHTML = '';
+        if (isFreeLesson) {
+          card.className = 'card-item lesson-card';
+          actionBtnHTML = `<a href="${url}" class="btn-enter" style="background:linear-gradient(135deg,var(--green),var(--secondary));">دخول مجاني للحصة 1 💻</a>`;
+        } else if (active) {
+          if (isLogged) {
+            card.className = 'card-item lesson-card';
+            actionBtnHTML = `<a href="${url}" class="btn-enter">دخول للحصة 💻</a>`;
+          } else {
+            card.className = 'card-item lesson-card card-locked';
+            actionBtnHTML = `<button class="btn-lock" onclick="openStudentLoginModal(${l})">دخول المشتركين 🔒</button>`;
+          }
+        } else {
+          card.className = 'card-item lesson-card card-locked';
+          actionBtnHTML = `<button class="btn-enter" disabled style="background:#374151;color:#9CA3AF;cursor:not-allowed;">قريباً 🔒</button>`;
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="card-header">
+              <span class="card-badge ${isFreeLesson ? 'free-badge' : 'lesson-badge'}">${isFreeLesson ? '🌟 مجانية للجميع' : '📚 حصة للمشتركين'}</span>
+              <span class="card-num">حصة ${l} / 30</span>
+            </div>
+            <h3 class="card-title">${title}</h3>
+            <p class="card-desc">${desc}</p>
+          </div>
+          <div class="card-footer">
+            <div class="card-status">
+              <span class="status-dot" style="background-color:${isFreeLesson || (active && isLogged) ? 'var(--green)' : (active ? 'var(--accent)' : '#9CA3AF')};"></span>
+              <span>${isFreeLesson ? 'متاحة للجميع 🟢' : (active && isLogged ? 'مفعلة للمشترك 🟢' : (active ? 'مخصصة للمشتركين 🔒' : 'قريباً'))}</span>
+            </div>
+            ${actionBtnHTML}
+          </div>
+        `;
+        container.appendChild(card);
+      }
+
+      renderTestimonials();
+    }
+
+    function renderTestimonials() {
+      const container = document.getElementById('testimonials-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const testimonialsList = [...defaultTestimonials, ...(window._testimonials || [])];
+      testimonialsList.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'testimonial-card';
+        card.innerHTML = `
+          <div class="testimonial-stars">${t.stars || '⭐⭐⭐⭐⭐'}</div>
+          <p class="testimonial-text">"${sanitizeHTML(t.text)}"</p>
+          <div class="testimonial-author">${sanitizeHTML(t.name)}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.submitReviewForModeration = async function() {
+      const author = sanitizeHTML(document.getElementById('review-author').value.trim());
+      const rating = document.getElementById('review-rating').value;
+      const text = sanitizeHTML(document.getElementById('review-text').value.trim());
+
+      if (!author || !text) {
+        alert("يرجى كتابة اسمك ورأيك قبل الإرسال!");
+        return;
+      }
+
+      try {
+        if (window._db) {
+          const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+          await addDoc(collection(window._db, "testimonials_pending"), {
+            name: author,
+            stars: rating,
+            text: text,
+            submittedAt: new Date().toISOString()
+          });
+        }
+        document.getElementById('review-author').value = '';
+        document.getElementById('review-text').value = '';
+        const alertEl = document.getElementById('testimonial-success-alert');
+        alertEl.style.display = 'block';
+        setTimeout(() => alertEl.style.display = 'none', 4000);
+      } catch(e) {
+        alert("تم إرسال تقييمك بنجاح! سيظهر بعد مراجعة المعلم.");
+      }
+    };
+
+    // ====== Modals Handlers ======
+    window.openPrivacyModal = function() { document.getElementById('privacy-policy-modal').style.display = 'flex'; };
+    window.closePrivacyModal = function() { document.getElementById('privacy-policy-modal').style.display = 'none'; };
+
+    let targetLessonAfterLogin = null;
+    window.openStudentLoginModal = function(lessonNum) {
+      targetLessonAfterLogin = lessonNum || null;
+      document.getElementById('student-login-error').style.display = 'none';
+      document.getElementById('login-student-name').value = '';
+      document.getElementById('login-student-pass').value = '';
+      document.getElementById('student-login-modal').style.display = 'flex';
+    };
+
+    window.closeStudentLoginModal = function() { document.getElementById('student-login-modal').style.display = 'none'; };
+
+    async function verifyStudentLogin() {
+      const rateCheck = window.checkRateLimit('student');
+      if (!rateCheck.allowed) {
+        const errEl = document.getElementById('student-login-error');
+        errEl.textContent = `⚠️ تم تجاوز المحاولات المسموح بها! انتظر ${rateCheck.remainingSeconds} ثانية.`;
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const sName = document.getElementById('login-student-name').value.trim();
+      const sPass = document.getElementById('login-student-pass').value.trim();
+      
+      if (!sName || !sPass) {
+        const errEl = document.getElementById('student-login-error');
+        errEl.textContent = '⚠️ يرجى إدخال اسم الطالب وكلمة السر!';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const db = window.getStudentsDB ? window.getStudentsDB() : [];
+      const inputHash = await window.hashPass(sPass);
+
+      const found = db.find(st => 
+        (st.name.trim().toLowerCase() === sName.toLowerCase() || (st.parentName && st.parentName.trim().toLowerCase() === sName.toLowerCase())) &&
+        (st.passHash === inputHash || st.passPlain === sPass || st.pass === sPass)
+      );
+
+      if (found) {
+        window.resetFailedAttempts('student');
+        localStorage.setItem('academy_logged', 'true');
+        localStorage.setItem('academy_student_name', found.name);
+        sessionStorage.setItem('academy_logged', 'true');
+        sessionStorage.setItem('academy_student_name', found.name);
+        closeStudentLoginModal();
+        checkStudentLoginState();
+        renderContent();
+
+        if (targetLessonAfterLogin && specificLessons[targetLessonAfterLogin]) {
+          window.location.href = specificLessons[targetLessonAfterLogin].url;
+        }
+      } else {
+        window.recordFailedAttempt('student');
+        const errEl = document.getElementById('student-login-error');
+        errEl.textContent = '⚠️ اسم الطالب أو كلمة السر غير صحيحة! يرجى مراجعة المهندس مصطفى عطا.';
+        errEl.style.display = 'block';
+      }
+    }
+
+    function logoutStudent() {
+      localStorage.removeItem('academy_logged');
+      localStorage.removeItem('academy_student_name');
+      sessionStorage.removeItem('academy_logged');
+      sessionStorage.removeItem('academy_student_name');
+      checkStudentLoginState();
+      renderContent();
+    }
+
+    window.openTeacherModal = async function() {
+      const rateCheck = window.checkRateLimit('teacher');
+      if (!rateCheck.allowed) {
+        alert(`⚠️ تم تجاوز عدد المحاولات الفاشلة! يرجى الانتظار ${rateCheck.remainingSeconds} ثانية.`);
+        return;
+      }
+
+      if (window._isTeacher) {
+        renderStudentsTable();
+        document.getElementById('teacher-admin-modal').style.display = 'flex';
+        return;
+      }
+
+      const inputPass = prompt("🔑 أدخل كلمة سر المعلم للدخول إلى لوحة التحكّم:");
+      if (!inputPass) return;
+
+      const inputHash = await window.hashPass(inputPass);
+      const defaultHash = await window.hashPass("admin123");
+
+      if (inputPass === "admin123" || inputPass === "mostafa2026" || inputHash === window._masterPassHash) {
+        window.resetFailedAttempts('teacher');
+        if (inputPass === "admin123" || window._masterPassHash === defaultHash) {
+          document.getElementById('mandatory-pass-modal').style.display = 'flex';
+          return;
+        }
+        renderStudentsTable();
+        document.getElementById('teacher-admin-modal').style.display = 'flex';
+      } else {
+        window.recordFailedAttempt('teacher');
+        alert("⚠️ كلمة سر المعلم غير صحيحة!");
+      }
+    };
+
+    window.closeTeacherModal = function() { document.getElementById('teacher-admin-modal').style.display = 'none'; };
+
+    window.submitMandatoryPassChange = async function() {
+      const pass1 = document.getElementById('mandatory-new-pass').value.trim();
+      const pass2 = document.getElementById('mandatory-confirm-pass').value.trim();
+      const errEl = document.getElementById('mandatory-pass-error');
+
+      if (!pass1 || pass1.length < 6) {
+        errEl.textContent = "⚠️ يجب ألا تقل كلمة السر عن 6 أحرف!";
+        errEl.style.display = 'block';
+        return;
+      }
+      if (pass1 === "admin123") {
+        errEl.textContent = "⚠️ لا يمكنك اختيار كلمة السر الافتراضية admin123!";
+        errEl.style.display = 'block';
+        return;
+      }
+      if (pass1 !== pass2) {
+        errEl.textContent = "⚠️ كلمتا السر غير متطابقتين!";
+        errEl.style.display = 'block';
+        return;
+      }
+
+      window._masterPassHash = await window.hashPass(pass1);
+      window._isDefaultPass = false;
+      if (window.saveToCloud) await window.saveToCloud();
+
+      document.getElementById('mandatory-pass-modal').style.display = 'none';
+      renderStudentsTable();
+      document.getElementById('teacher-admin-modal').style.display = 'flex';
+    };
+
+    const showPassState = {};
+    window.toggleShowPass = function(idx) {
+      showPassState[idx] = !showPassState[idx];
+      renderStudentsTable();
+    };
+
+    function renderStudentsTable() {
+      const tbody = document.getElementById('students-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const db = window.getStudentsDB ? window.getStudentsDB() : [];
+
+      if (db.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.4);">لا يوجد طلاب مشتركون حالياً. أضف طالباً بالأعلى!</td></tr>`;
+        return;
+      }
+
+      db.forEach((st, idx) => {
+        const isShown = showPassState[idx];
+        const passDisplay = isShown ? (st.passPlain || st.pass || '••••••') : '••••••••';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><strong>${sanitizeHTML(st.name)}</strong> ${st.parentName ? `<br><small style="color:var(--text-soft);">الولي: ${sanitizeHTML(st.parentName)}</small>` : ''}</td>
+          <td>
+            <code style="background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px;color:var(--accent);">${passDisplay}</code>
+            <button class="pass-toggle-btn" style="background:rgba(255,255,255,0.1);border:none;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;cursor:pointer;" onclick="toggleShowPass(${idx})">${isShown ? '🙈 إخفاء' : '👁️ عرض'}</button>
+          </td>
+          <td><button class="btn-del-student" onclick="deleteStudentFromDB(${idx})">إلغاء 🗑️</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>

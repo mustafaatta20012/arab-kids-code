@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>كود أطفال العرب | منصة تعليم البرمجة وسكراتش للأطفال مع م. مصطفى عطا</title>
+    <meta name="description" content="أفضل كورس ممتع وتفاعلي لتعليم البرمجة وتصميم الألعاب للأطفال أونلاين من سن 6 إلى 14 سنة مع المهندس مصطفى عطا" />
+    <meta name="keywords" content="تعليم البرمجة للأطفال, سكراتش للأطفال, كورس برمجة أطفال أونلاين, دورات برمجة للأطفال, مصطفى عطا" />
+    <meta name="author" content="المهندس مصطفى عطا" />
+    
+    <!-- Theme color for light and dark mode -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0284c7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#020617" />
+    <link rel="canonical" href="https://arab-kids-code.web.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_AR" />
+    <meta property="og:site_name" content="كود أطفال العرب" />
+    <meta property="og:title" content="كود أطفال العرب | منصة تعليم البرمجة وسكراتش للأطفال مع م. مصطفى عطا" />
+    <meta property="og:description" content="أفضل كورس ممتع وتفاعلي لتعليم البرمجة وتصميم الألعاب للأطفال أونلاين من سن 6 إلى 14 سنة مع المهندس مصطفى عطا" />
+    <meta property="og:image" content="https://arab-kids-code.web.app/images/logo.png" />
+    <meta property="og:url" content="https://arab-kids-code.web.app/" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="كود أطفال العرب | منصة تعليم البرمجة وسكراتش للأطفال مع م. مصطفى عطا" />
+    <meta name="twitter:description" content="أفضل كورس ممتع وتفاعلي لتعليم البرمجة وتصميم الألعاب للأطفال أونلاين من سن 6 إلى 14 سنة مع المهندس مصطفى عطا" />
+    <meta name="twitter:image" content="https://arab-kids-code.web.app/images/logo.png" />
+
+    <!-- Google Fonts Arabic Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Theme Hydration Script to prevent FOUC (Flash of Unstyled Content) -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-cairo antialiased selection:bg-brand-500 selection:text-white transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

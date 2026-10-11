@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ====== Helper Functions ======
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isTeacher() {
+      return isAuthenticated() && request.auth.token.teacher == true;
+    }
+    
+    function isStudentOwner(studentId) {
+      return isAuthenticated() && request.auth.uid == studentId;
+    }
+
+    function isParentOwner(parentPhone) {
+      return isAuthenticated() && (request.auth.token.phone == parentPhone || request.auth.uid == parentPhone);
+    }
+
+    // ====== Public Academy Metadata (Read-Only) ======
+    match /academy/public {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ====== Parent Accounts Collection ======
+    match /parents/{parentPhone} {
+      allow read: if isParentOwner(parentPhone) || isTeacher();
+      allow write: if isParentOwner(parentPhone) || isTeacher();
+    }
+
+    // ====== Student Profiles & Multi-Child Progress Data ======
+    match /students/{studentId} {
+      // Students read their own profile; Parents read linked children; Teachers read all
+      allow read: if isStudentOwner(studentId) || isTeacher() || (isAuthenticated() && resource.data.parentPhone == request.auth.token.phone);
+      
+      // Students update progress keys; Parents update linked children; Teachers update all
+      allow update: if (isStudentOwner(studentId) 
+                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['unlockedLessons', 'lastActiveAt']))
+                   || (isAuthenticated() && resource.data.parentPhone == request.auth.token.phone)
+                   || isTeacher();
+                   
+      allow create, delete: if isTeacher();
+    }
+
+    // ====== Testimonials Submission & Moderation Collections ======
+    match /testimonials_pending/{docId} {
+      allow create: if true; // Public submission allowed
+      allow read, update, delete: if isTeacher(); // Moderation restricted to teachers
+    }
+
+    // ====== Free Trial Lead Capture Collection ======
+    match /leads/{leadId} {
+      allow create: if true; // Public lead capture allowed
+      allow read, update, delete: if isTeacher();
+    }
+
+    match /testimonials/{docId} {
+      allow read: if true; // Public view
+      allow write: if isTeacher();
+    }
+
+    // ====== Rate Limit Logs (Server-Side Only) ======
+    match /auth_attempts/{docId} {
+      allow read, write: if false;
+    }
+
+    // ====== Global Default Lock ======
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
