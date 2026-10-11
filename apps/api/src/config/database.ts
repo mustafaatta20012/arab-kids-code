@@ -2,8 +2,8 @@ import dns from 'dns';
 import mongoose from 'mongoose';
 import { env } from './env';
 
-// Fallback to Google and Cloudflare DNS to avoid local ISP ECONNREFUSED on SRV records
-if (env.MONGODB_URI.startsWith('mongodb+srv://')) {
+// Fallback to Google DNS only on Windows local environments where ISP DNS blocks SRV lookups
+if (process.platform === 'win32' && env.MONGODB_URI.startsWith('mongodb+srv://')) {
   try {
     dns.setServers(['8.8.8.8', '1.1.1.1']);
   } catch (err) {
@@ -11,7 +11,7 @@ if (env.MONGODB_URI.startsWith('mongodb+srv://')) {
   }
 }
 
-export const connectDatabase = async (retries = 5, delayMs = 3000): Promise<typeof mongoose | null> => {
+export const connectDatabase = async (retries = process.env.VERCEL ? 1 : 3, delayMs = 1500): Promise<typeof mongoose | null> => {
   if (mongoose.connection.readyState >= 1) {
     return mongoose;
   }
@@ -19,7 +19,10 @@ export const connectDatabase = async (retries = 5, delayMs = 3000): Promise<type
 
   for (let i = 1; i <= retries; i++) {
     try {
-      const conn = await mongoose.connect(env.MONGODB_URI);
+      const conn = await mongoose.connect(env.MONGODB_URI, {
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000,
+      });
       console.log(`🍃 Connected to MongoDB: ${conn.connection.host}/${conn.connection.name}`);
       return conn;
     } catch (error: any) {

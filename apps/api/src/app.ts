@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
@@ -54,14 +55,22 @@ export const createApp = (): Express => {
   // 3. Strict CORS & Parsing
   const allowedOrigins = [
     env.CLIENT_URL,
+    'https://arab-kids-code.web.app',
+    'https://arab-kids-code.firebaseapp.com',
+    'https://arab-kids-code.vercel.app',
+    'http://localhost:3000',
     ...(env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((s) => s.trim()) : []),
   ].filter(Boolean);
 
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (e.g. server-to-server, curl, health checks) or explicitly allowed origins
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (
+          !origin ||
+          allowedOrigins.includes(origin) ||
+          origin.endsWith('.vercel.app') ||
+          origin.endsWith('.web.app')
+        ) {
           callback(null, true);
         } else {
           callback(new Error(`CORS blocked request from unauthorized origin: ${origin}`));
@@ -82,6 +91,20 @@ export const createApp = (): Express => {
     setupSwagger(app);
   }
 
+  // 6. Fast Health Check & Monitoring Endpoints (Before DB middleware, never blocks)
+  for (const healthPath of ['/health', '/api/health', '/api/v1/health', '/v1/health']) {
+    app.get(healthPath, (_req: Request, res: Response) => {
+      res.status(200).json({
+        status: 'ok',
+        service: 'Arab Kids Code API',
+        env: env.NODE_ENV,
+        dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'connecting',
+        uptimeSeconds: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+      });
+    });
+  }
+
   // Ensure DB connection on any request (critical for serverless cold starts)
   app.use(async (_req, _res, next) => {
     try {
@@ -91,19 +114,6 @@ export const createApp = (): Express => {
     }
     next();
   });
-
-  // 6. Production Health Check & Monitoring Endpoints (Excluded from rate limit)
-  for (const healthPath of ['/health', '/api/health', '/api/v1/health', '/v1/health']) {
-    app.get(healthPath, (_req: Request, res: Response) => {
-      res.status(200).json({
-        status: 'ok',
-        service: 'Arab Kids Code API',
-        env: env.NODE_ENV,
-        uptimeSeconds: Math.floor(process.uptime()),
-        timestamp: new Date().toISOString(),
-      });
-    });
-  }
 
   // 7. Global API Rate Limiting
   app.use(env.API_PREFIX, apiLimiter);
