@@ -306,7 +306,7 @@ export class LessonService {
     let correctAnswersCount = 0;
     const totalQuestions = quiz.questions.length;
     const evaluatedQuestions = quiz.questions.map((q, idx) => {
-      const userSubmission = input.answers.find((a) => a.questionIndex === idx);
+      const userSubmission = input.answers.find((a: any) => a.questionIndex === idx);
       const isCorrect = userSubmission ? userSubmission.selectedOption === q.correctIndex : false;
       if (isCorrect) correctAnswersCount++;
 

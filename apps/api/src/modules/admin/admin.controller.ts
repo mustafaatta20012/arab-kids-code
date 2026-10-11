@@ -77,7 +77,12 @@ export class AdminController {
       const actorId = req.user!.userId;
       const { status, unlockedUpTo } = UpdateSubscriptionSchema.parse(req.body);
 
-      const sub = await AdminService.updateSubscription(studentId, status, unlockedUpTo, actorId);
+      const sub = await AdminService.updateSubscription(
+        studentId,
+        status,
+        typeof unlockedUpTo === 'number' ? unlockedUpTo : 30,
+        actorId,
+      );
       res.status(200).json({
         success: true,
         message: 'تم تحديث حالة الاشتراك بنجاح',

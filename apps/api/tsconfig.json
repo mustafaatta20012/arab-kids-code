@@ -4,8 +4,13 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "module": "CommonJS",
-    "moduleResolution": "Node",
-    "target": "ES2022"
+    "moduleResolution": "node",
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@arab-kids-code/shared": ["../../packages/shared/dist/index.d.ts"]
+    }
   },
   "include": ["src/**/*"]
 }
