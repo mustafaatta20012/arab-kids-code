@@ -105,13 +105,15 @@ export const createApp = (): Express => {
   // 7. Global API Rate Limiting
   app.use(env.API_PREFIX, apiLimiter);
 
-  // 8. API v1 Domain Routes
-  app.use(`${env.API_PREFIX}/auth`, authRoutes);
-  app.use(`${env.API_PREFIX}/public`, publicRoutes);
-  app.use(`${env.API_PREFIX}/lessons`, lessonRoutes);
-  app.use(`${env.API_PREFIX}/me`, parentRoutes);
-  app.use(`${env.API_PREFIX}/admin`, adminRoutes);
-  app.use(`${env.API_PREFIX}/billing`, billingRoutes);
+  // 8. API Domain Routes (Supporting both /api/v1 and /v1 for Vercel routing compatibility)
+  for (const prefix of ['/api/v1', '/v1']) {
+    app.use(`${prefix}/auth`, authRoutes);
+    app.use(`${prefix}/public`, publicRoutes);
+    app.use(`${prefix}/lessons`, lessonRoutes);
+    app.use(`${prefix}/me`, parentRoutes);
+    app.use(`${prefix}/admin`, adminRoutes);
+    app.use(`${prefix}/billing`, billingRoutes);
+  }
 
   // 9. Centralized Error Handling
   app.use(errorHandler);
