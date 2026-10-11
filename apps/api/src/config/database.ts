@@ -12,6 +12,9 @@ if (env.MONGODB_URI.startsWith('mongodb+srv://')) {
 }
 
 export const connectDatabase = async (retries = 5, delayMs = 3000): Promise<typeof mongoose | null> => {
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose;
+  }
   mongoose.set('strictQuery', true);
 
   for (let i = 1; i <= retries; i++) {
