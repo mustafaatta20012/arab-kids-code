@@ -18,9 +18,34 @@
       }
     },
     {
-      "source": "/(.*)",
+      "source": "/api",
+      "destination": {
+        "service": "api"
+      }
+    },
+    {
+      "source": "/assets/(.*)",
       "destination": {
         "service": "web"
+      }
+    },
+    {
+      "source": "/images/(.*)",
+      "destination": {
+        "service": "web"
+      }
+    },
+    {
+      "source": "/(.*\\..*)",
+      "destination": {
+        "service": "web"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "web",
+        "path": "/index.html"
       }
     }
   ]
