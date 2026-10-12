@@ -26,7 +26,58 @@ export const createApp = (): Express => {
   // 1. Structured Logging & Correlation IDs
   app.use(requestLogger);
 
-  // 2. Security Headers & CSP Configuration
+  // 2. High-Priority CORS & Preflight Handling (Must execute before Helmet & body parsers)
+  const allowedOrigins = [
+    env.CLIENT_URL,
+    'https://arab-kids-code.web.app',
+    'https://arab-kids-code.firebaseapp.com',
+    'https://arab-kids-code.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    ...(env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((s) => s.trim()) : []),
+  ].filter(Boolean);
+
+  const isOriginAllowed = (origin?: string): boolean => {
+    if (!origin) return true; // Allow non-browser, server-to-server or tools
+    const lower = origin.toLowerCase().trim();
+    if (allowedOrigins.some((o) => o.toLowerCase() === lower)) return true;
+    if (
+      lower.endsWith('.vercel.app') ||
+      lower.endsWith('.web.app') ||
+      lower.endsWith('.firebaseapp.com')
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const corsOptions: cors.CorsOptions = {
+    origin: (origin, callback) => {
+      if (isOriginAllowed(origin)) {
+        callback(null, true);
+      } else {
+        // Disallow without throwing internal server error
+        callback(null, false);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'X-Request-Id',
+    ],
+    exposedHeaders: ['Set-Cookie', 'X-Request-Id'],
+    maxAge: 86400,
+  };
+
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
+
+  // 3. Security Headers & CSP Configuration
   app.use(
     helmet({
       hsts:
@@ -45,38 +96,10 @@ export const createApp = (): Express => {
           fontSrc: ["'self'", 'https://fonts.gstatic.com'],
           imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
           frameSrc: ["'self'", 'https://scratch.mit.edu', 'https://accept.paymob.com'],
-          connectSrc: ["'self'", env.CLIENT_URL, 'https:'],
+          connectSrc: ["'self'", ...allowedOrigins, 'https:'],
         },
       },
       crossOriginResourcePolicy: { policy: 'cross-origin' },
-    }),
-  );
-
-  // 3. Strict CORS & Parsing
-  const allowedOrigins = [
-    env.CLIENT_URL,
-    'https://arab-kids-code.web.app',
-    'https://arab-kids-code.firebaseapp.com',
-    'https://arab-kids-code.vercel.app',
-    'http://localhost:3000',
-    ...(env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((s) => s.trim()) : []),
-  ].filter(Boolean);
-
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (
-          !origin ||
-          allowedOrigins.includes(origin) ||
-          origin.endsWith('.vercel.app') ||
-          origin.endsWith('.web.app')
-        ) {
-          callback(null, true);
-        } else {
-          callback(new Error(`CORS blocked request from unauthorized origin: ${origin}`));
-        }
-      },
-      credentials: true,
     }),
   );
   app.use(express.json({ limit: '10mb' }));

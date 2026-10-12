@@ -27,16 +27,12 @@ if (process.env.VERCEL !== '1' && env.NODE_ENV !== 'test') {
   });
 }
 
-// Serverless handler for Vercel
-async function handler(req: any, res: any) {
-  await ensureDb();
-  return app(req, res);
-}
+// Export Express application instance for Vercel serverless execution
+export default app;
+export { app };
 
-// Direct function export for CommonJS runners
-module.exports = handler;
-(module.exports as any).default = handler;
+// Direct exports for CommonJS compatibility
+module.exports = app;
+(module.exports as any).default = app;
 (module.exports as any).app = app;
 
-export default handler;
-export { app };
