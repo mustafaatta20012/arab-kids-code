@@ -12,7 +12,9 @@ import { WhatsAppButton } from './components/layout/WhatsAppButton';
 import { SubscriptionBanner } from './components/common/SubscriptionBanner';
 
 // Route guards
-import { ProtectedRoute, AdminRoute, GuestRoute } from './components/routes/AppRoutes';
+import { ProtectedRoute, AdminRoute, GuestRoute, LessonRoute } from './components/routes/AppRoutes';
+import { ToastProvider } from './components/common/Toast';
+
 
 // Public pages
 import { HomePage }        from './pages/HomePage';
@@ -47,6 +49,7 @@ export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
+        <ToastProvider>
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 font-cairo text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-500 selection:text-white transition-colors duration-200">
           <SubscriptionBanner />
           <Navbar />
@@ -72,13 +75,13 @@ export const App: React.FC = () => {
                 <ProtectedRoute><StudentDashboard /></ProtectedRoute>
               } />
               <Route path="/student/lessons/:id" element={
-                <ProtectedRoute><StudentLessonPlayer /></ProtectedRoute>
+                <LessonRoute><StudentLessonPlayer /></LessonRoute>
               } />
               <Route path="/student/projects" element={
                 <ProtectedRoute><StudentProjectsPage /></ProtectedRoute>
               } />
               <Route path="/lessons/:id" element={
-                <ProtectedRoute><StudentLessonPlayer /></ProtectedRoute>
+                <LessonRoute><StudentLessonPlayer /></LessonRoute>
               } />
 
               {/* ── Protected: parent ────────────────────────────────────── */}
@@ -111,6 +114,7 @@ export const App: React.FC = () => {
           <Footer />
           <WhatsAppButton />
         </div>
+        </ToastProvider>
       </Router>
     </QueryClientProvider>
   );

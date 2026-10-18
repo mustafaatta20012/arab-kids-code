@@ -25,6 +25,7 @@ export interface UserProfile {
   role: 'parent' | 'student' | 'teacher' | 'super_admin';
   approved: boolean;
   approvalStatus: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'active' | 'suspended';
   subscriptionStart: string | null;
   subscriptionEnd: string | null;
   createdAt: string;
@@ -50,6 +51,7 @@ export const registerParent = async (input: {
     role:             'parent',
     approved:         false,
     approvalStatus:   'pending',
+    status:           'pending',
     subscriptionStart: null,
     subscriptionEnd:   null,
     createdAt:        new Date().toISOString(),
@@ -107,6 +109,7 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     role:             data.role ?? 'parent',
     approved:         data.approved ?? false,
     approvalStatus:   data.approvalStatus ?? 'pending',
+    status:           data.status ?? (data.approved ? 'active' : 'pending'),
     subscriptionStart: data.subscriptionStart ?? null,
     subscriptionEnd:   data.subscriptionEnd ?? null,
     createdAt:        data.createdAt?.toDate?.()?.toISOString() ?? '',

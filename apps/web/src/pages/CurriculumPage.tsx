@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Unlock, Play, Search, Sparkles, Clock, Award } from 'lucide-react';
+import { Lock, Unlock, Play, Search, Sparkles, Clock, Award, CheckCircle2, ShieldAlert } from 'lucide-react';
+
 import { Seo } from '../components/common/Seo';
 import { getLessons } from '../services/lessonsService';
+import { useAuth } from '../context/AuthContext';
 
 export const CurriculumPage: React.FC = () => {
+  const { hasAccess, isAuthenticated, user } = useAuth();
   const [lessons, setLessons] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
@@ -19,6 +22,8 @@ export const CurriculumPage: React.FC = () => {
   const filteredLessons = (lessons.length > 0 ? lessons : fallback30Lessons).filter((l) =>
     (l.titleAr || l.title || '').toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const accountStatus = user?.status ?? 'pending';
 
   return (
     <>
@@ -55,14 +60,32 @@ export const CurriculumPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Grid of 30 Lessons */}
+      {/* Status banner — live, auto-disappears when admin approves */}
+      {isAuthenticated && !hasAccess && (
+        <div className={`max-w-3xl mx-auto px-4 py-3 rounded-2xl border flex items-center gap-3 text-sm font-bold ${
+          accountStatus === 'suspended'
+            ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'
+            : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300'
+        }`}>
+          {accountStatus === 'suspended'
+            ? <><ShieldAlert className="w-5 h-5 shrink-0" /> حسابك موقوف — تواصل مع المعلم لإعادة التفعيل</>  
+            : <><Clock className="w-5 h-5 shrink-0 animate-pulse" /> حسابك قيد مراجعة المعلم — ستُفتح الدروس تلقائياً عند الموافقة</>}
+        </div>
+      )}
+      {isAuthenticated && hasAccess && (
+        <div className="max-w-3xl mx-auto px-4 py-3 rounded-2xl border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 flex items-center gap-3 text-sm font-bold text-emerald-800 dark:text-emerald-300">
+          <CheckCircle2 className="w-5 h-5 shrink-0" /> حسابك نشط — جميع الدروس مفتوحة لك ✨
+        </div>
+      )}
+
       {loading ? (
         <div className="text-center py-20 text-slate-400 font-bold">جاري تحميل منهج الدروس...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredLessons.map((lesson) => {
-            const isFree = lesson.isFree || lesson.order === 1;
-            const isUnlocked = lesson.isUnlocked || isFree;
+            const isFree     = lesson.isFree || lesson.order === 1;
+            // Lesson is unlocked if: it's the free lesson OR the user has active access
+            const isUnlocked = isFree || hasAccess;
 
             return (
               <div
@@ -120,13 +143,22 @@ export const CurriculumPage: React.FC = () => {
                       <Play className="w-4 h-4 fill-white" />
                       <span>شاهد وركز في الدرس</span>
                     </Link>
+                  ) : isAuthenticated ? (
+                    // Logged in but pending/suspended — click goes to lesson which shows status screen
+                    <Link
+                      to={`/lessons/${lesson.id}`}
+                      className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl bg-amber-100 dark:bg-amber-950/60 hover:bg-amber-200 text-amber-800 dark:text-amber-300 font-bold text-sm transition-colors"
+                    >
+                      <Clock className="w-4 h-4" />
+                      <span>في انتظار الموافقة</span>
+                    </Link>
                   ) : (
                     <Link
-                      to="/pricing"
+                      to="/login"
                       className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm transition-colors"
                     >
                       <Lock className="w-4 h-4" />
-                      <span>اشترك لفتح هذا الدرس</span>
+                      <span>سجّل للوصول إلى الدرس</span>
                     </Link>
                   )}
                 </div>

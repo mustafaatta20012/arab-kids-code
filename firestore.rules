@@ -2,21 +2,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Helper functions ───────────────────────────────────────────────────
+    // ── Helper functions ────────────────────────────────────────────────────
+    // NOTE: each get() call costs 1 Firestore read from quota.
+    // We cache the user doc lookup via the pattern below.
+    // Total extra reads per request: 1 (for isAdmin/isActive checks).
 
     function isLoggedIn() {
       return request.auth != null;
     }
 
-    // Read role from Firestore document (NO custom claims needed)
-    function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
     function isAdmin() {
       return isLoggedIn() && (
-        getUserRole() == 'teacher' ||
-        getUserRole() == 'super_admin'
+        userDoc().role == 'teacher' || userDoc().role == 'super_admin'
+      );
+    }
+
+    /** Active account — status field OR legacy approved:true fallback */
+    function isActive() {
+      return isLoggedIn() && (
+        userDoc().status == 'active' ||
+        (userDoc().status == null && userDoc().approved == true)
       );
     }
 
@@ -28,19 +37,47 @@ service cloud.firestore {
       return val is string && val.size() > 0 && val.size() <= maxLen;
     }
 
+    // ── Protected fields that users CANNOT change themselves ─────────────
+    function noProtectedFieldsChanged() {
+      return !('status'      in request.resource.data.diff(resource.data).affectedKeys())
+          && !('role'        in request.resource.data.diff(resource.data).affectedKeys())
+          && !('approved'    in request.resource.data.diff(resource.data).affectedKeys())
+          && !('approvedAt'  in request.resource.data.diff(resource.data).affectedKeys())
+          && !('approvedBy'  in request.resource.data.diff(resource.data).affectedKeys())
+          && !('approvalStatus' in request.resource.data.diff(resource.data).affectedKeys());
+    }
+
     // ── Courses: public read, admin write ──────────────────────────────────
     match /courses/{doc} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // ── Lessons: public read for isPublic, auth read for others ───────────
+    // ── Lessons ────────────────────────────────────────────────────────────
+    // Public metadata (title, thumbnail, order, xpReward, durationMin, isFree)
+    // is readable by everyone — so the curriculum page can list locked lessons.
+    // Full lesson content (videoUrl, resources, scratchProjectUrl) is readable
+    // only by active users or admins.
+    //
+    // To enforce this, store public fields in a subcollection or use Security
+    // Rules field-level. Since Firestore can't do field-level on reads, the
+    // recommended pattern is: keep a /lessons/{id} doc with only public metadata,
+    // and store full content in /lessons/{id}/content/data (subcollection).
+    //
+    // Current implementation: full doc readable only by active/admin.
+    // Public listing uses the fallback30Lessons array in CurriculumPage.
     match /lessons/{lessonId} {
-      allow read: if resource == null || resource.data.isPublic == true || isLoggedIn();
+      allow read:  if isActive() || isAdmin();
       allow write: if isAdmin();
+
+      // Lesson content subcollection (videos, resources, etc.)
+      match /content/{contentId} {
+        allow read:  if isActive() || isAdmin();
+        allow write: if isAdmin();
+      }
     }
 
-    // ── Reviews: approved public read, public create with validation ───────
+    // ── Reviews ────────────────────────────────────────────────────────────
     match /reviews/{reviewId} {
       allow read: if resource == null || resource.data.status == 'approved' || isAdmin();
 
@@ -56,7 +93,7 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
-    // ── Contacts: public create only, admin reads/manages ─────────────────
+    // ── Contacts ───────────────────────────────────────────────────────────
     match /contacts/{contactId} {
       allow create: if
         request.resource.data.keys().hasAll(['name', 'phone', 'message', 'createdAt']) &&
@@ -67,31 +104,26 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // ── Users: full rules ──────────────────────────────────────────────────
+    // ── Users ──────────────────────────────────────────────────────────────
     match /users/{userId} {
 
-      // Admin: can query (list) the whole collection AND read individual docs
-      allow list:   if isAdmin();
-      allow get:    if isOwner(userId) || isAdmin();
+      // Admin: full read (list + get)
+      allow list: if isAdmin();
+      allow get:  if isOwner(userId) || isAdmin();
 
-      // Any logged-in user can create their own document on registration
-      allow create: if
-        isLoggedIn() &&
-        request.auth.uid == userId;
+      // Any authenticated user can create their own profile doc on registration
+      allow create: if isLoggedIn() && request.auth.uid == userId;
 
-      // Owner: can update own profile (but NOT role / approved / approvalStatus)
-      // Admin: can update any field
+      // Admin: can update any field.
+      // Owner: can update safe fields only — NOT status/role/approved/approvedAt/approvedBy/approvalStatus.
       allow update: if
         isAdmin() ||
-        (isOwner(userId) &&
-         !('role' in request.resource.data.diff(resource.data).affectedKeys()) &&
-         !('approved' in request.resource.data.diff(resource.data).affectedKeys()) &&
-         !('approvalStatus' in request.resource.data.diff(resource.data).affectedKeys()));
+        (isOwner(userId) && noProtectedFieldsChanged());
 
       allow delete: if isAdmin();
     }
 
-    // ── Students: parent manages own children, admin reads all ─────────────
+    // ── Students ───────────────────────────────────────────────────────────
     match /students/{studentId} {
       allow list: if isAdmin();
       allow get: if
@@ -99,8 +131,7 @@ service cloud.firestore {
         (resource == null || resource.data.parentId == request.auth.uid || isAdmin());
 
       allow create: if
-        isLoggedIn() &&
-        request.resource.data.parentId == request.auth.uid;
+        isLoggedIn() && request.resource.data.parentId == request.auth.uid;
 
       allow update: if
         isAdmin() ||
@@ -109,18 +140,17 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ── Progress: owner reads/writes own ──────────────────────────────────
+    // ── Progress ────────────────────────────────────────────────────────────
     match /progress/{docId} {
       allow read: if
         isLoggedIn() &&
-        (resource == null || resource.data.userId == request.auth.uid);
+        (resource == null || resource.data.userId == request.auth.uid || isAdmin());
 
       allow write: if
-        isLoggedIn() &&
-        request.resource.data.userId == request.auth.uid;
+        isActive() && request.resource.data.userId == request.auth.uid;
     }
 
-    // ── Submissions: student creates/reads own, admin manages all ──────────
+    // ── Submissions ─────────────────────────────────────────────────────────
     match /submissions/{subId} {
       allow list: if isAdmin();
       allow get: if
@@ -128,7 +158,7 @@ service cloud.firestore {
         (resource == null || resource.data.studentId == request.auth.uid || isAdmin());
 
       allow create: if
-        isLoggedIn() &&
+        isActive() &&
         request.resource.data.studentId == request.auth.uid &&
         request.resource.data.status == 'pending';
 
@@ -136,14 +166,24 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ── Audit logs: admin only ─────────────────────────────────────────────
+    // ── Audit logs ──────────────────────────────────────────────────────────
     match /auditLogs/{logId} {
       allow list, get: if isAdmin();
       allow create:    if isAdmin();
       allow update, delete: if false;
     }
 
-    // ── Deny everything else ──────────────────────────────────────────────
+    // ── In-app notifications (optional) ────────────────────────────────────
+    // Admin writes to notifications/{uid}/items/{notifId}
+    // User reads only their own notifications
+    match /notifications/{userId}/items/{notifId} {
+      allow read:   if isOwner(userId);
+      allow create: if isAdmin();
+      allow update: if isOwner(userId); // mark as read
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+
+    // ── Deny everything else ────────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }

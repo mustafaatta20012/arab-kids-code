@@ -1,56 +1,89 @@
 /**
  * src/context/AuthContext.tsx
- * Single source of truth for Firebase Auth + Firestore profile.
- * Replaces the old Zustand useAuthStore.
+ *
+ * KEY CHANGE: replaced one-time getDoc() with onSnapshot() on users/{uid}.
+ * This means the moment an admin writes status:"active" to Firestore,
+ * every open tab of that user gets the update in real time — no refresh needed.
  */
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, {
+  createContext, useContext, useEffect, useState, useRef, useCallback,
+} from 'react';
 import {
-  onAuthStateChanged,
-  signOut,
-  setPersistence,
-  browserLocalPersistence,
-  type User,
+  onAuthStateChanged, signOut, setPersistence,
+  browserLocalPersistence, type User,
 } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, type Unsubscribe } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
-import {
-  loginWithPhone,
-  registerParent,
-  forgotPassword,
-} from '../services/authService';
+import { loginWithPhone, registerParent, forgotPassword } from '../services/authService';
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
+export type AccountStatus = 'pending' | 'active' | 'suspended';
+
 export interface UserProfile {
-  uid: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: 'parent' | 'student' | 'teacher' | 'super_admin';
-  approved: boolean;
-  approvalStatus: 'pending' | 'approved' | 'rejected';
+  uid:               string;
+  name:              string;
+  email:             string;
+  phone:             string;
+  role:              'parent' | 'student' | 'teacher' | 'super_admin';
+  /** Legacy field — kept for backward compat */
+  approved:          boolean;
+  /** Legacy field — kept for backward compat */
+  approvalStatus:    'pending' | 'approved' | 'rejected';
+  /** Primary access gate (replaces approved/approvalStatus logic) */
+  status:            AccountStatus;
   subscriptionStart: string | null;
-  subscriptionEnd: string | null;
-  createdAt?: string;
+  subscriptionEnd:   string | null;
+  createdAt?:        string;
+  approvedAt?:       string;
+  approvedBy?:       string;
+  lastLoginAt?:      string;
 }
 
 interface AuthContextValue {
-  /** Raw Firebase user (null if logged out) */
-  firebaseUser: User | null;
-  /** Firestore profile document */
-  user: UserProfile | null;
-  /** True until the first onAuthStateChanged callback fires */
-  loading: boolean;
-  isAuthenticated: boolean;
-  isAdmin: boolean;
+  firebaseUser:         User | null;
+  user:                 UserProfile | null;
+  loading:              boolean;
+  isAuthenticated:      boolean;
+  isAdmin:              boolean;
+  /** true if status === "active" OR the user is an admin */
+  hasAccess:            boolean;
+  /** Legacy alias — same as hasAccess */
   hasActiveSubscription: boolean;
-  // Actions
-  login: (phone: string, password: string) => Promise<UserProfile>;
-  register: (name: string, phone: string, password: string) => Promise<UserProfile>;
+  login:         (phone: string, password: string) => Promise<UserProfile>;
+  register:      (name: string, phone: string, password: string) => Promise<UserProfile>;
   resetPassword: (phone: string) => Promise<void>;
-  logout: () => Promise<void>;
-  /** Manually refresh the Firestore profile (e.g. after admin changes role) */
-  refreshProfile: () => Promise<void>;
+  logout:        () => Promise<void>;
+  refreshProfile: () => void;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+
+/** Map a raw Firestore data object to a typed UserProfile. */
+function mapProfile(uid: string, data: Record<string, any>): UserProfile {
+  // Derive `status` from legacy fields if the new field is missing
+  let status: AccountStatus = data.status ?? 'pending';
+  if (!data.status) {
+    if (data.approved === true || data.approvalStatus === 'approved') status = 'active';
+    else if (data.approvalStatus === 'rejected') status = 'suspended';
+  }
+
+  return {
+    uid,
+    name:              data.name              ?? '',
+    email:             data.email             ?? '',
+    phone:             data.phone             ?? '',
+    role:              data.role              ?? 'parent',
+    approved:          data.approved          ?? false,
+    approvalStatus:    data.approvalStatus    ?? 'pending',
+    status,
+    subscriptionStart: data.subscriptionStart ?? null,
+    subscriptionEnd:   data.subscriptionEnd   ?? null,
+    createdAt:         data.createdAt?.toDate?.()?.toISOString()  ?? '',
+    approvedAt:        data.approvedAt?.toDate?.()?.toISOString() ?? '',
+    approvedBy:        data.approvedBy        ?? '',
+    lastLoginAt:       data.lastLoginAt?.toDate?.()?.toISOString() ?? '',
+  };
 }
 
 // ── Context ───────────────────────────────────────────────────────────────
@@ -64,67 +97,69 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser]                 = useState<UserProfile | null>(null);
   const [loading, setLoading]           = useState(true);
 
-  // Track mounted state to avoid state updates on unmounted component
-  const isMounted = useRef(true);
+  const isMounted         = useRef(true);
+  const profileUnsub      = useRef<Unsubscribe | null>(null);
+
   useEffect(() => {
     isMounted.current = true;
     return () => { isMounted.current = false; };
   }, []);
 
-  // ── Load Firestore profile for a Firebase user ─────────────────────────
-  const loadProfile = async (fbUser: User): Promise<UserProfile | null> => {
-    try {
-      const snap = await getDoc(doc(db, 'users', fbUser.uid));
-      if (!snap.exists()) return null;
-      const data = snap.data();
-      return {
-        uid:               fbUser.uid,
-        name:              data.name              ?? '',
-        email:             data.email             ?? fbUser.email ?? '',
-        phone:             data.phone             ?? '',
-        role:              data.role              ?? 'parent',
-        approved:          data.approved          ?? false,
-        approvalStatus:    data.approvalStatus    ?? 'pending',
-        subscriptionStart: data.subscriptionStart ?? null,
-        subscriptionEnd:   data.subscriptionEnd   ?? null,
-        createdAt:         data.createdAt?.toDate?.()?.toISOString() ?? '',
-      };
-    } catch {
-      return null;
-    }
-  };
+  // ── Subscribe to live profile ──────────────────────────────────────────
+  const subscribeToProfile = useCallback((fbUser: User) => {
+    // Cancel any previous subscription
+    profileUnsub.current?.();
 
-  // ── Manually refresh profile (after admin edits Firestore) ─────────────
-  const refreshProfile = async () => {
-    if (!firebaseUser) return;
-    const profile = await loadProfile(firebaseUser);
-    if (isMounted.current) setUser(profile);
-  };
+    const ref = doc(db, 'users', fbUser.uid);
+    profileUnsub.current = onSnapshot(
+      ref,
+      (snap) => {
+        if (!isMounted.current) return;
+        if (snap.exists()) {
+          setUser(mapProfile(fbUser.uid, snap.data()));
+        } else {
+          // Document may not exist yet right after registration — keep null
+          setUser(null);
+        }
+        setLoading(false);
+      },
+      (err) => {
+        // Permission error or offline — fail gracefully
+        console.error('[AuthContext] profile snapshot error:', err);
+        if (isMounted.current) setLoading(false);
+      },
+    );
+  }, []);
 
-  // ── Auth state listener (single source of truth) ───────────────────────
+  // ── Unsubscribe from profile ───────────────────────────────────────────
+  const unsubscribeProfile = useCallback(() => {
+    profileUnsub.current?.();
+    profileUnsub.current = null;
+  }, []);
+
+  // ── Auth state listener ────────────────────────────────────────────────
   useEffect(() => {
-    // Ensure persistence is set before listening
     setPersistence(auth, browserLocalPersistence).catch(() => {});
 
-    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+    const unsubAuth = onAuthStateChanged(auth, (fbUser) => {
       if (!isMounted.current) return;
 
       if (fbUser) {
         setFirebaseUser(fbUser);
-        const profile = await loadProfile(fbUser);
-        if (isMounted.current) {
-          setUser(profile);
-          setLoading(false);
-        }
+        subscribeToProfile(fbUser);   // ← live profile listener
       } else {
         setFirebaseUser(null);
         setUser(null);
+        unsubscribeProfile();
         setLoading(false);
       }
     });
 
-    return unsubscribe; // cleanup on unmount
-  }, []);
+    return () => {
+      unsubAuth();
+      unsubscribeProfile();
+    };
+  }, [subscribeToProfile, unsubscribeProfile]);
 
   // ── Derived state ──────────────────────────────────────────────────────
   const isAuthenticated = !!firebaseUser && !!user;
@@ -132,28 +167,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = isAuthenticated &&
     (user?.role === 'teacher' || user?.role === 'super_admin');
 
-  const hasActiveSubscription = isAuthenticated && (
-    user?.approved === true && (
-      !user.subscriptionEnd ||
-      new Date(user.subscriptionEnd) > new Date()
-    )
-  );
+  const hasAccess = isAuthenticated &&
+    (isAdmin || user?.status === 'active');
 
   // ── Actions ────────────────────────────────────────────────────────────
 
   const login = async (phone: string, password: string): Promise<UserProfile> => {
     const profile = await loginWithPhone(phone, password);
-    if (isMounted.current) setUser(profile);
+    // onSnapshot will auto-update user state — return profile for redirect logic
     return profile;
   };
 
   const register = async (
-    name: string,
-    phone: string,
-    password: string,
+    name: string, phone: string, password: string,
   ): Promise<UserProfile> => {
     const profile = await registerParent({ name, phone, password });
-    if (isMounted.current) setUser(profile);
     return profile;
   };
 
@@ -165,11 +193,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async (): Promise<void> => {
+    unsubscribeProfile();
     await signOut(auth);
     if (isMounted.current) {
       setFirebaseUser(null);
       setUser(null);
     }
+  };
+
+  /** No-op — kept for backward compat; onSnapshot makes it automatic */
+  const refreshProfile = () => {
+    if (firebaseUser) subscribeToProfile(firebaseUser);
   };
 
   // ── Value ──────────────────────────────────────────────────────────────
@@ -179,7 +213,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     isAuthenticated,
     isAdmin,
-    hasActiveSubscription,
+    hasAccess,
+    hasActiveSubscription: hasAccess,   // legacy alias
     login,
     register,
     resetPassword,
