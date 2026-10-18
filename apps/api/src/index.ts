@@ -1,8 +1,9 @@
 import { createApp } from './app';
 import { env } from './config/env';
 import { connectDatabase } from './config/database';
+import express from 'express';
 
-// ── Global crash handlers: log everything to Vercel function logs ──────────
+// ── Global crash handlers: log to Vercel function logs ──────────────────────
 process.on('uncaughtException', (err) => {
   console.error('💥 [UNCAUGHT EXCEPTION]', err.message, err.stack);
 });
@@ -12,13 +13,25 @@ process.on('unhandledRejection', (reason) => {
 
 let isDbConnected = false;
 
-let app: ReturnType<typeof createApp>;
+// Safely initialize the Express app — never throw (causes FUNCTION_INVOCATION_FAILED)
+let app: express.Express;
 try {
   app = createApp();
+  console.log('✅ Express app initialized successfully');
 } catch (err: any) {
   console.error('💥 [APP INIT FAILED]', err.message, err.stack);
-  throw err;
+  // Fallback: minimal app that returns the error details
+  app = express();
+  app.use((_req: any, res: any) => {
+    res.status(500).json({
+      success: false,
+      code: 'APP_INIT_FAILED',
+      message: err.message,
+      stack: err.stack,
+    });
+  });
 }
+
 
 const ensureDb = async () => {
   if (!isDbConnected) {
