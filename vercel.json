@@ -12,12 +12,6 @@
       "framework": "vite"
     }
   },
-  "env": {
-    "NODE_ENV": "production",
-    "CLIENT_URL": "https://arab-kids-code.web.app",
-    "ALLOWED_ORIGINS": "https://arab-kids-code.web.app,https://arab-kids-code.firebaseapp.com,https://arab-kids-code.vercel.app",
-    "FRONTEND_SECURE_COOKIE": "true"
-  },
   "headers": [
     {
       "source": "/api/(.*)",

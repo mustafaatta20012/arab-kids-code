@@ -47,9 +47,10 @@ export const createApp = (): Express => {
   const corsOptions: cors.CorsOptions = {
     origin: (origin, callback) => {
       if (isOriginAllowed(origin)) {
-        callback(null, origin || true); // Echo back the exact origin (required for credentials)
+        callback(null, origin || true); // Echo exact origin back (required for credentials:true)
       } else {
-        callback(new Error(`CORS: Origin not allowed — ${origin}`));
+        // Return false (no header) — do NOT throw Error (causes 500)
+        callback(null, false);
       }
     },
     credentials: true,
