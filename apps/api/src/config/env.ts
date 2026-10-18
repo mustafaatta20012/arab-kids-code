@@ -15,12 +15,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(5000),
   API_PREFIX: z.string().default('/api/v1'),
-  // Primary frontend URL: Firebase Hosting in production, localhost in development
-  CLIENT_URL: z.string().default(
-    process.env.NODE_ENV === 'production'
-      ? 'https://arab-kids-code.web.app'
-      : 'http://localhost:3000'
-  ),
+  CLIENT_URL: z.string().default('https://arab-kids-code.web.app'),
   ALLOWED_ORIGINS: z.string().optional(),
 
   MONGODB_URI: z

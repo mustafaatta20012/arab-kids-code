@@ -2,8 +2,23 @@ import { createApp } from './app';
 import { env } from './config/env';
 import { connectDatabase } from './config/database';
 
+// ── Global crash handlers: log everything to Vercel function logs ──────────
+process.on('uncaughtException', (err) => {
+  console.error('💥 [UNCAUGHT EXCEPTION]', err.message, err.stack);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('💥 [UNHANDLED REJECTION]', reason);
+});
+
 let isDbConnected = false;
-const app = createApp();
+
+let app: ReturnType<typeof createApp>;
+try {
+  app = createApp();
+} catch (err: any) {
+  console.error('💥 [APP INIT FAILED]', err.message, err.stack);
+  throw err;
+}
 
 const ensureDb = async () => {
   if (!isDbConnected) {
