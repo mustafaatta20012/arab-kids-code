@@ -12,6 +12,24 @@
       "framework": "vite"
     }
   },
+  "env": {
+    "NODE_ENV": "production",
+    "CLIENT_URL": "https://arab-kids-code.web.app",
+    "ALLOWED_ORIGINS": "https://arab-kids-code.web.app,https://arab-kids-code.firebaseapp.com,https://arab-kids-code.vercel.app",
+    "FRONTEND_SECURE_COOKIE": "true"
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization,X-Requested-With,Accept,Origin,X-Request-Id" },
+        { "key": "Access-Control-Max-Age", "value": "86400" },
+        { "key": "Vary", "value": "Origin" }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",

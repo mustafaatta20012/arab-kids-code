@@ -27,37 +27,29 @@ export const createApp = (): Express => {
   app.use(requestLogger);
 
   // 2. High-Priority CORS & Preflight Handling (Must execute before Helmet & body parsers)
+  // Primary frontend: Firebase Hosting — arab-kids-code.web.app
   const allowedOrigins = [
-    env.CLIENT_URL,
-    'https://arab-kids-code.web.app',
-    'https://arab-kids-code.firebaseapp.com',
-    'https://arab-kids-code.vercel.app',
+    'https://arab-kids-code.web.app',       // Primary: Firebase Hosting
+    'https://arab-kids-code.firebaseapp.com', // Firebase legacy domain
+    'https://arab-kids-code.vercel.app',    // Vercel (admin/fallback)
+    env.CLIENT_URL,                          // From environment variable
     'http://localhost:3000',
     'http://localhost:5173',
     ...(env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((s) => s.trim()) : []),
-  ].filter(Boolean);
+  ].filter(Boolean) as string[];
 
   const isOriginAllowed = (origin?: string): boolean => {
-    if (!origin) return true; // Allow non-browser, server-to-server or tools
+    if (!origin) return true; // Allow server-to-server / curl / Postman
     const lower = origin.toLowerCase().trim();
-    if (allowedOrigins.some((o) => o.toLowerCase() === lower)) return true;
-    if (
-      lower.endsWith('.vercel.app') ||
-      lower.endsWith('.web.app') ||
-      lower.endsWith('.firebaseapp.com')
-    ) {
-      return true;
-    }
-    return false;
+    return allowedOrigins.some((o) => o.toLowerCase() === lower);
   };
 
   const corsOptions: cors.CorsOptions = {
     origin: (origin, callback) => {
       if (isOriginAllowed(origin)) {
-        callback(null, true);
+        callback(null, origin || true); // Echo back the exact origin (required for credentials)
       } else {
-        // Disallow without throwing internal server error
-        callback(null, false);
+        callback(new Error(`CORS: Origin not allowed — ${origin}`));
       }
     },
     credentials: true,
@@ -72,10 +64,13 @@ export const createApp = (): Express => {
     ],
     exposedHeaders: ['Set-Cookie', 'X-Request-Id'],
     maxAge: 86400,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   };
 
-  app.use(cors(corsOptions));
+  // Handle OPTIONS preflight FIRST — before any other middleware
   app.options('*', cors(corsOptions));
+  app.use(cors(corsOptions));
 
   // 3. Security Headers & CSP Configuration
   app.use(

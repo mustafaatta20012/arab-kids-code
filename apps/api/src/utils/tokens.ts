@@ -33,16 +33,20 @@ export const setRefreshCookie = (res: Response, refreshToken: string): void => {
   const isProd = env.NODE_ENV === 'production';
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    secure: isProd,                    // Must be true in production (HTTPS)
+    sameSite: isProd ? 'none' : 'lax', // 'none' required for cross-origin (Firebase ↔ Vercel)
+    maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
     path: '/api/v1/auth',
   });
 };
 
+
 export const clearRefreshCookie = (res: Response): void => {
+  const isProd = env.NODE_ENV === 'production';
   res.clearCookie('refreshToken', {
     httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     path: '/api/v1/auth',
   });
 };

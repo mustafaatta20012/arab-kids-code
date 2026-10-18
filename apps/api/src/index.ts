@@ -17,7 +17,9 @@ const ensureDb = async () => {
 };
 
 // Start standalone HTTP server when run in non-serverless environments
-if (process.env.VERCEL !== '1' && env.NODE_ENV !== 'test') {
+const isServerless = process.env.VERCEL === '1' || process.env.FUNCTION_TARGET || process.env.K_SERVICE;
+if (!isServerless && env.NODE_ENV !== 'test') {
+
   ensureDb().then(() => {
     app.listen(env.PORT, () => {
       console.log(`🚀 Arab Kids Code API running on port ${env.PORT} in ${env.NODE_ENV} mode`);
