@@ -73,6 +73,23 @@ export const createApp = (): Express => {
   app.options('*', cors(corsOptions));
   app.use(cors(corsOptions));
 
+  // ── Fast Health Check (MUST be a separate Router mounted FIRST) ─────────────
+  // app.use() middleware runs for ALL requests — health must bypass DB entirely
+  const healthRouter = express.Router();
+  for (const healthPath of ['/health', '/api/health', '/api/v1/health', '/v1/health']) {
+    healthRouter.get(healthPath, (_req: Request, res: Response) => {
+      res.status(200).json({
+        status: 'ok',
+        service: 'Arab Kids Code API',
+        env: env.NODE_ENV,
+        dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'connecting/disconnected',
+        uptimeSeconds: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+      });
+    });
+  }
+  app.use(healthRouter);
+
   // 3. Security Headers & CSP Configuration
   app.use(
     helmet({
@@ -110,19 +127,6 @@ export const createApp = (): Express => {
     setupSwagger(app);
   }
 
-  // 6. Fast Health Check & Monitoring Endpoints (Before DB middleware, never blocks)
-  for (const healthPath of ['/health', '/api/health', '/api/v1/health', '/v1/health']) {
-    app.get(healthPath, (_req: Request, res: Response) => {
-      res.status(200).json({
-        status: 'ok',
-        service: 'Arab Kids Code API',
-        env: env.NODE_ENV,
-        dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'connecting',
-        uptimeSeconds: Math.floor(process.uptime()),
-        timestamp: new Date().toISOString(),
-      });
-    });
-  }
 
   // Ensure DB connection on any request (critical for serverless cold starts)
   app.use(async (_req, _res, next) => {
