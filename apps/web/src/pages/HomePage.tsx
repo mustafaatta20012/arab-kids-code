@@ -18,7 +18,7 @@ import {
   Trophy,
 } from 'lucide-react';
 
-import { fetchApi } from '../lib/api';
+import { getApprovedReviews } from '../services/reviewsService';
 import { Seo } from '../components/common/Seo';
 
 export const HomePage: React.FC = () => {
@@ -28,13 +28,11 @@ export const HomePage: React.FC = () => {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchApi('/public/reviews')
-      .then((res) => {
-        if (res.success && res.data) {
-          setReviews(res.data);
-        }
+    getApprovedReviews()
+      .then((data) => {
+        if (data.length > 0) setReviews(data);
       })
-      .catch(() => {});
+      .catch(() => {}); // silently fall back to defaultTestimonials
   }, []);
 
   const toggleFaq = (idx: number) => {

@@ -3,13 +3,21 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // ── Helper functions ───────────────────────────────────────────────────
+
     function isLoggedIn() {
       return request.auth != null;
     }
 
+    // Read role from Firestore document (NO custom claims needed)
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
     function isAdmin() {
-      return isLoggedIn() &&
-        request.auth.token.role in ['teacher', 'super_admin'];
+      return isLoggedIn() && (
+        getUserRole() == 'teacher' ||
+        getUserRole() == 'super_admin'
+      );
     }
 
     function isOwner(userId) {
@@ -28,13 +36,13 @@ service cloud.firestore {
 
     // ── Lessons: public read for isPublic, auth read for others ───────────
     match /lessons/{lessonId} {
-      allow read: if resource.data.isPublic == true || isLoggedIn();
+      allow read: if resource == null || resource.data.isPublic == true || isLoggedIn();
       allow write: if isAdmin();
     }
 
-    // ── Reviews: public read (approved only), public create, admin moderate
+    // ── Reviews: approved public read, public create with validation ───────
     match /reviews/{reviewId} {
-      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow read: if resource == null || resource.data.status == 'approved' || isAdmin();
 
       allow create: if
         request.resource.data.keys().hasAll(['authorName', 'rating', 'comment', 'status', 'createdAt']) &&
@@ -43,13 +51,12 @@ service cloud.firestore {
         isValidString(request.resource.data.comment, 500) &&
         request.resource.data.rating is number &&
         request.resource.data.rating >= 1 &&
-        request.resource.data.rating <= 5 &&
-        !('approved' in request.resource.data);
+        request.resource.data.rating <= 5;
 
       allow update, delete: if isAdmin();
     }
 
-    // ── Contacts: public create only, admin reads ─────────────────────────
+    // ── Contacts: public create only, admin reads/manages ─────────────────
     match /contacts/{contactId} {
       allow create: if
         request.resource.data.keys().hasAll(['name', 'phone', 'message', 'createdAt']) &&
@@ -60,16 +67,20 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // ── Users: owner reads/updates own, admin reads all ───────────────────
+    // ── Users: full rules ──────────────────────────────────────────────────
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
 
+      // Admin: can query (list) the whole collection AND read individual docs
+      allow list:   if isAdmin();
+      allow get:    if isOwner(userId) || isAdmin();
+
+      // Any logged-in user can create their own document on registration
       allow create: if
         isLoggedIn() &&
-        request.auth.uid == userId &&
-        request.resource.data.keys().hasAll(['name', 'phone', 'role', 'approved', 'approvalStatus']);
+        request.auth.uid == userId;
 
-      // Owner can update profile but NOT role/approved/approvalStatus
+      // Owner: can update own profile (but NOT role / approved / approvalStatus)
+      // Admin: can update any field
       allow update: if
         isAdmin() ||
         (isOwner(userId) &&
@@ -80,9 +91,10 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ── Students: parent reads/adds own children, admin reads all ─────────
+    // ── Students: parent manages own children, admin reads all ─────────────
     match /students/{studentId} {
-      allow read: if
+      allow list: if isAdmin();
+      allow get: if
         isLoggedIn() &&
         (resource == null || resource.data.parentId == request.auth.uid || isAdmin());
 
@@ -108,11 +120,12 @@ service cloud.firestore {
         request.resource.data.userId == request.auth.uid;
     }
 
-    // ── Submissions: owner creates/reads own, admin manages all ───────────
+    // ── Submissions: student creates/reads own, admin manages all ──────────
     match /submissions/{subId} {
-      allow read: if
+      allow list: if isAdmin();
+      allow get: if
         isLoggedIn() &&
-        (resource.data.studentId == request.auth.uid || isAdmin());
+        (resource == null || resource.data.studentId == request.auth.uid || isAdmin());
 
       allow create: if
         isLoggedIn() &&
@@ -125,12 +138,12 @@ service cloud.firestore {
 
     // ── Audit logs: admin only ─────────────────────────────────────────────
     match /auditLogs/{logId} {
-      allow read: if isAdmin();
-      allow create: if isAdmin();
+      allow list, get: if isAdmin();
+      allow create:    if isAdmin();
       allow update, delete: if false;
     }
 
-    // ── Deny everything else by default ───────────────────────────────────
+    // ── Deny everything else ──────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }

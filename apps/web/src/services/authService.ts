@@ -28,6 +28,7 @@ export interface UserProfile {
   subscriptionStart: string | null;
   subscriptionEnd: string | null;
   createdAt: string;
+  lastLoginAt?: string;
 }
 
 // ── Register ───────────────────────────────────────────────────────────────
@@ -67,13 +68,25 @@ export const loginWithPhone = async (
   phoneOrEmail: string,
   password: string,
 ): Promise<UserProfile> => {
-  // Support phone login: construct synthetic email
   const email = phoneOrEmail.includes('@')
     ? phoneOrEmail
     : `${phoneOrEmail.replace(/\D/g, '')}@arabkids.app`;
 
   const credential = await signInWithEmailAndPassword(auth, email, password);
-  const profile = await getUserProfile(credential.user.uid);
+  const uid = credential.user.uid;
+
+  // Always update lastLoginAt (and create doc if missing for pre-existing Auth users)
+  await setDoc(
+    doc(db, 'users', uid),
+    {
+      lastLoginAt: serverTimestamp(),
+      email,
+      // Only set defaults if document is brand new (merge won't overwrite existing fields)
+    },
+    { merge: true },
+  );
+
+  const profile = await getUserProfile(uid);
   if (!profile) throw new Error('لم يتم العثور على بيانات المستخدم');
   return profile;
 };
@@ -97,6 +110,7 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     subscriptionStart: data.subscriptionStart ?? null,
     subscriptionEnd:   data.subscriptionEnd ?? null,
     createdAt:        data.createdAt?.toDate?.()?.toISOString() ?? '',
+    lastLoginAt:      data.lastLoginAt?.toDate?.()?.toISOString() ?? '',
   };
 };
 

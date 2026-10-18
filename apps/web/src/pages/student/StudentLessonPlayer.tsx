@@ -1,52 +1,90 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { fetchApi } from '../../lib/api';
+import {
+  doc, getDoc, collection, addDoc, setDoc, serverTimestamp,
+} from 'firebase/firestore';
+import { db } from '../../services/firebase';
+import { useAuth } from '../../context/AuthContext';
 import { CheckCircle2, Clock, ShieldAlert, ArrowRight, Lock, MessageCircle, LogIn, ExternalLink, Send } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
 
 export const StudentLessonPlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [lesson, setLesson] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [errorCode, setErrorCode] = useState('');
+  const { user, firebaseUser, hasActiveSubscription } = useAuth();
+  const [lesson, setLesson]           = useState<any>(null);
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState('');
+  const [errorCode, setErrorCode]     = useState('');
   const [scratchLink, setScratchLink] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [completed, setCompleted] = useState(false);
+  const [completed, setCompleted]     = useState(false);
 
   useEffect(() => {
     if (!id) return;
-    fetchApi(`/lessons/${id}`)
-      .then((res) => {
-        if (res.success && res.data) {
-          setLesson(res.data);
+
+    // Access check
+    if (!firebaseUser) {
+      setErrorCode('UNAUTHORIZED');
+      setError('يجب تسجيل الدخول أولاً لمشاهدة هذا الدرس');
+      setLoading(false);
+      return;
+    }
+
+    if (user && !hasActiveSubscription) {
+      if (user.approvalStatus === 'pending') {
+        setErrorCode('ACCOUNT_PENDING_APPROVAL');
+        setError('حسابك قيد مراجعة المعلم حالياً');
+      } else {
+        setErrorCode('SUBSCRIPTION_EXPIRED');
+        setError('انتهت فترة اشتراكك');
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Load lesson from Firestore
+    getDoc(doc(db, 'lessons', id))
+      .then((snap) => {
+        if (snap.exists()) {
+          setLesson({ id: snap.id, ...snap.data() });
+        } else {
+          setError('لم يتم العثور على هذا الدرس');
         }
       })
-      .catch((err) => {
-        setErrorCode(err.code || 'LESSON_LOCKED');
-        setError(err.message || 'حسابك قيد مراجعة المعلم حالياً (Your account is awaiting teacher approval)');
-      })
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, firebaseUser, user, hasActiveSubscription]);
 
   const handleMarkComplete = async () => {
+    if (!firebaseUser || !id) return;
     try {
-      await fetchApi(`/lessons/${id}/progress`, {
-        method: 'POST',
-        body: JSON.stringify({ watchedSeconds: 300, isCompleted: true }),
-      });
+      await setDoc(
+        doc(db, 'progress', `${firebaseUser.uid}_${id}`),
+        {
+          userId:      firebaseUser.uid,
+          lessonId:    id,
+          isCompleted: true,
+          completedAt: serverTimestamp(),
+        },
+        { merge: true },
+      );
       setCompleted(true);
     } catch (_err) {
-      // Progress update failure handled gracefully
+      // graceful failure
     }
   };
 
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!firebaseUser || !id) return;
     try {
-      await fetchApi(`/lessons/${id}/submission`, {
-        method: 'POST',
-        body: JSON.stringify({ scratchLink }),
+      await addDoc(collection(db, 'submissions'), {
+        studentId:   firebaseUser.uid,
+        studentName: user?.name ?? 'طالب',
+        lessonId:    id,
+        scratchUrl:  scratchLink,
+        status:      'pending',
+        submittedAt: serverTimestamp(),
       });
       setSubmitSuccess(true);
     } catch (err: any) {
