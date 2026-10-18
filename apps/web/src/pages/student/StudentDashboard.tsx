@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Award, Flame, Play, CheckCircle2, Lock, Sparkles, FolderKanban } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
-import { useAuthStore } from '../../lib/auth';
+import { useAuth } from '../../context/AuthContext';
 import { getLessons } from '../../services/lessonsService';
 
 export const StudentDashboard: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const [lessons, setLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

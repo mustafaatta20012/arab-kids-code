@@ -1,9 +1,10 @@
 import React from 'react';
 import { AlertTriangle, Clock, MessageCircle } from 'lucide-react';
-import { useAuthStore } from '../../lib/auth';
+import { useAuth } from '../../context/AuthContext';
 
 export const SubscriptionBanner: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
+
 
   if (!user || user.role !== 'student' || !user.subscriptionEnd) {
     return null;

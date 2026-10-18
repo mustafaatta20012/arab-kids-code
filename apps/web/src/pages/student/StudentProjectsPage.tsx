@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FolderKanban, Star, ExternalLink, ArrowRight, CheckCircle2, Clock } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
-import { useAuthStore } from '../../lib/auth';
+import { useAuth } from '../../context/AuthContext';
 import { getMySubmissions } from '../../services/lessonsService';
 
 export const StudentProjectsPage: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

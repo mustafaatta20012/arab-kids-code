@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Award, Flame, CheckCircle2, ShieldCheck, Sparkles, Lock } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
-import { useAuthStore } from '../../lib/auth';
+import { useAuth } from '../../context/AuthContext';
 import { getMyChildren, addChild } from '../../services/studentService';
 
 export const ParentDashboard: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const [children, setChildrenData] = useState<any[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
