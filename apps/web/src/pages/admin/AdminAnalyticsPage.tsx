@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { fetchApi } from '../../lib/api';
 import { Users, CreditCard, Star, FolderKanban } from 'lucide-react';
+import { getAnalytics } from '../../services/adminService';
 
 export const AdminAnalyticsPage: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-
-
   useEffect(() => {
-    fetchApi('/admin/analytics')
-      .then((res) => {
-        if (res.success && res.data) {
-          setData(res.data);
-        }
-      })
+    getAnalytics()
+      .then((res) => setData(res))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const overview = data?.overview || {
-    totalStudents: 128,
-    totalParents: 94,
-    activeSubscriptions: 86,
-    pendingReviewsCount: 3,
-    pendingSubmissionsCount: 5,
+  const overview = data ? {
+    totalStudents:           data.totalUsers,
+    activeSubscriptions:     data.approvedUsers,
+    pendingReviewsCount:     data.totalReviews,
+    pendingSubmissionsCount: data.totalSubmissions,
+  } : {
+    totalStudents: 0, activeSubscriptions: 0,
+    pendingReviewsCount: 0, pendingSubmissionsCount: 0,
   };
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { fetchApi } from '../../lib/api';
 import { Star, Check, X } from 'lucide-react';
+import { getPendingReviews, moderateReview } from '../../services/adminService';
 
 
 export const AdminReviewsPage: React.FC = () => {
@@ -9,26 +9,17 @@ export const AdminReviewsPage: React.FC = () => {
 
   const fetchReviews = () => {
     setLoading(true);
-    fetchApi('/admin/reviews/pending')
-      .then((res) => {
-        if (res.success && res.data) {
-          setReviews(res.data);
-        }
-      })
+    getPendingReviews()
+      .then((data) => setReviews(data))
       .catch(() => {})
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
-    fetchReviews();
-  }, []);
+  useEffect(() => { fetchReviews(); }, []);
 
   const handleModerate = async (reviewId: string, status: 'approved' | 'rejected') => {
     try {
-      await fetchApi(`/admin/reviews/${reviewId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status }),
-      });
+      await moderateReview(reviewId, status);
       fetchReviews();
     } catch (_err) {
       alert('فشل مراجعة التقييم');
@@ -51,7 +42,7 @@ export const AdminReviewsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {reviews.map((rev) => (
-            <div key={rev._id} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between">
+            <div key={rev.id} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="font-extrabold text-slate-900 dark:text-white text-base">{rev.authorName}</span>
@@ -61,19 +52,19 @@ export const AdminReviewsPage: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed italic">"{rev.text}"</p>
+                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed italic">"{rev.comment}"</p>
               </div>
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
                 <button
-                  onClick={() => handleModerate(rev._id, 'rejected')}
+                  onClick={() => handleModerate(rev.id, 'rejected')}
                   className="px-4 py-2 rounded-xl bg-rose-100 dark:bg-rose-950/60 hover:bg-rose-200 dark:hover:bg-rose-900/60 text-rose-800 dark:text-rose-300 font-extrabold text-xs flex items-center gap-1 transition-colors"
                 >
                   <X className="w-4 h-4" /> رفض التقييم
                 </button>
 
                 <button
-                  onClick={() => handleModerate(rev._id, 'approved')}
+                  onClick={() => handleModerate(rev.id, 'approved')}
                   className="px-5 py-2 rounded-xl bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white font-extrabold text-xs flex items-center gap-1 shadow-md transition-colors"
                 >
                   <Check className="w-4 h-4" /> الموافقة ونشر التقييم

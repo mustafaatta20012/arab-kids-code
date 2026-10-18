@@ -1,33 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchApi } from '../../lib/api';
 import { Award, Flame, Play, CheckCircle2, Lock, Sparkles, FolderKanban } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
+import { useAuthStore } from '../../lib/auth';
+import { getLessons } from '../../services/lessonsService';
 
 export const StudentDashboard: React.FC = () => {
-  const [profile, setProfile] = useState<any>(null);
+  const { user } = useAuthStore();
   const [lessons, setLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([fetchApi('/auth/me'), fetchApi('/lessons')])
-      .then(([meRes, lessonsRes]) => {
-        if (meRes.success && meRes.data) {
-          setProfile(meRes.data.studentProfile || meRes.data);
-        }
-        if (lessonsRes.success && lessonsRes.data) {
-          setLessons(lessonsRes.data);
-        }
-      })
+    getLessons()
+      .then((data) => setLessons(data))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const studentName = profile?.displayName || profile?.name || 'البطل الصغير';
-  const xp = profile?.xp || 250;
-  const level = profile?.level || 2;
-  const streak = profile?.streakDays || 3;
-  const badges = profile?.badges || ['بطل الدرس الأول', 'مبتكر الألعاب'];
+  const studentName = user?.name || 'البطل الصغير';
+  const xp = 250;
+  const level = 2;
+  const streak = 3;
+  const badges = ['بطل الدرس الأول', 'مبتكر الألعاب'];
 
   const completedCount = lessons.filter((l) => l.isCompleted).length || 1;
   const progressPercent = Math.round((completedCount / 30) * 100);

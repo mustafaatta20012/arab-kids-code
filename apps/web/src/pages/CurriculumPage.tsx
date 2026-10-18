@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchApi } from '../lib/api';
 import { Lock, Unlock, Play, Search, Sparkles, Clock, Award } from 'lucide-react';
 import { Seo } from '../components/common/Seo';
+import { getLessons } from '../services/lessonsService';
 
 export const CurriculumPage: React.FC = () => {
   const [lessons, setLessons] = useState<any[]>([]);
@@ -10,18 +10,14 @@ export const CurriculumPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi('/lessons')
-      .then((res) => {
-        if (res.success && res.data) {
-          setLessons(res.data);
-        }
-      })
+    getLessons()
+      .then((data) => setLessons(data))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   const filteredLessons = (lessons.length > 0 ? lessons : fallback30Lessons).filter((l) =>
-    l.title.ar.toLowerCase().includes(searchQuery.toLowerCase()),
+    (l.titleAr || l.title || '').toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -98,11 +94,11 @@ export const CurriculumPage: React.FC = () => {
                   </div>
 
                   <h3 className="text-lg font-black text-slate-900 dark:text-white leading-snug">
-                    {lesson.title.ar}
+                    {lesson.titleAr || lesson.title}
                   </h3>
 
                   <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed line-clamp-2">
-                    {lesson.summary.ar}
+                    {lesson.description || ''}
                   </p>
                 </div>
 
@@ -147,10 +143,13 @@ export const CurriculumPage: React.FC = () => {
 const fallback30Lessons = Array.from({ length: 30 }, (_, i) => ({
   id: `lesson_${i + 1}`,
   order: i + 1,
-  title: { ar: `الدرس ${i + 1}: موضوع تفاعلي لتعليم سكراتش وتصميم الألعاب` },
-  summary: { ar: `في هذا الدرس الممتع يتعلم الطفل مفاهيم برمجة الألعاب والتطبيق العملي البسيط.` },
+  title: `الدرس ${i + 1}: موضوع تفاعلي لتعليم سكراتش وتصميم الألعاب`,
+  titleAr: `الدرس ${i + 1}: موضوع تفاعلي لتعليم سكراتش وتصميم الألعاب`,
+  description: `في هذا الدرس الممتع يتعلم الطفل مفاهيم برمجة الألعاب والتطبيق العملي البسيط.`,
+  isPublic: i === 0,
   isFree: i === 0,
   isUnlocked: i === 0,
+  duration: 15,
   durationMin: 15,
   xpReward: 50,
 }));

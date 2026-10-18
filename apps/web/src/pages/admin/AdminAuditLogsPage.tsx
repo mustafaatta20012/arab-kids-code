@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchApi } from '../../lib/api';
+import { getAuditLogs } from '../../services/adminService';
 
 
 export const AdminAuditLogsPage: React.FC = () => {
@@ -7,12 +7,8 @@ export const AdminAuditLogsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi('/admin/audit-logs')
-      .then((res) => {
-        if (res.success && res.data) {
-          setLogs(res.data);
-        }
-      })
+    getAuditLogs()
+      .then((data) => setLogs(data))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -44,10 +40,10 @@ export const AdminAuditLogsPage: React.FC = () => {
                 {logs.map((log) => (
                   <tr key={log._id || log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4 font-bold text-sky-700 dark:text-sky-400">{log.action}</td>
-                    <td className="px-6 py-4 text-slate-800 dark:text-slate-200">{log.entity} ({log.entityId})</td>
-                    <td className="px-6 py-4 font-medium text-slate-600 dark:text-slate-400">{log.actorId?.name || 'النظام'}</td>
+                    <td className="px-6 py-4 text-slate-800 dark:text-slate-200">{log.targetId}</td>
+                    <td className="px-6 py-4 font-medium text-slate-600 dark:text-slate-400">{log.adminId || 'النظام'}</td>
                     <td className="px-6 py-4 text-xs font-mono text-slate-500 dark:text-slate-400">
-                      {new Date(log.createdAt).toLocaleString('ar-EG')}
+                      {new Date(log.timestamp).toLocaleString('ar-EG')}
                     </td>
                   </tr>
                 ))}

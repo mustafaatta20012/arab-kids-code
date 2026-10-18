@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchApi } from '../../lib/api';
 import { FolderKanban, Star, ExternalLink, ArrowRight, CheckCircle2, Clock } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
+import { useAuthStore } from '../../lib/auth';
+import { getMySubmissions } from '../../services/lessonsService';
 
 export const StudentProjectsPage: React.FC = () => {
+  const { user } = useAuthStore();
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi('/lessons/submissions/my')
-      .then((res) => {
-        if (res.success && res.data) {
-          setSubmissions(res.data);
-        }
-      })
+    if (!user?.uid) return;
+    getMySubmissions(user.uid)
+      .then((data) => setSubmissions(data))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [user?.uid]);
 
   return (
     <>
@@ -49,10 +48,10 @@ export const StudentProjectsPage: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {submissions.map((sub) => (
-            <div key={sub._id || sub.id} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <div key={sub.id} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <span className="font-extrabold text-slate-900 dark:text-white text-base">
-                  مشروع {sub.lessonId?.title?.ar || 'درس سكراتش'}
+                  مشروع الدرس {sub.lessonId}
                 </span>
 
                 {sub.status === 'reviewed' ? (
@@ -66,9 +65,9 @@ export const StudentProjectsPage: React.FC = () => {
                 )}
               </div>
 
-              {sub.scratchLink && (
+              {sub.scratchUrl && (
                 <a
-                  href={sub.scratchLink}
+                  href={sub.scratchUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold text-xs hover:underline"
@@ -77,19 +76,19 @@ export const StudentProjectsPage: React.FC = () => {
                 </a>
               )}
 
-              {sub.teacherFeedback && (
+              {sub.feedback && (
                 <div className="bg-sky-50 dark:bg-sky-950/50 p-4 rounded-2xl border border-sky-200 dark:border-sky-800 text-sky-900 dark:text-sky-200 text-xs space-y-2">
                   <div className="flex items-center gap-1 font-extrabold text-sky-800 dark:text-sky-300">
                     <span>ملاحظات المعلم مصطفى عطا:</span>
-                    {sub.rating && (
+                    {sub.score && (
                       <div className="flex text-amber-400 mr-2">
-                        {Array.from({ length: sub.rating }).map((_, i) => (
+                        {Array.from({ length: Math.min(sub.score, 5) }).map((_, i) => (
                           <Star key={i} className="w-4 h-4 fill-amber-400" />
                         ))}
                       </div>
                     )}
                   </div>
-                  <p className="italic">"{sub.teacherFeedback}"</p>
+                  <p className="italic">"{sub.feedback}"</p>
                 </div>
               )}
             </div>

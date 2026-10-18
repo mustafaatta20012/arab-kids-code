@@ -1,73 +1,136 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // ====== Helper Functions ======
-    function isAuthenticated() {
+
+    // ── Helper functions ───────────────────────────────────────────────────
+    function isLoggedIn() {
       return request.auth != null;
     }
-    
-    function isTeacher() {
-      return isAuthenticated() && request.auth.token.teacher == true;
-    }
-    
-    function isStudentOwner(studentId) {
-      return isAuthenticated() && request.auth.uid == studentId;
+
+    function isAdmin() {
+      return isLoggedIn() &&
+        request.auth.token.role in ['teacher', 'super_admin'];
     }
 
-    function isParentOwner(parentPhone) {
-      return isAuthenticated() && (request.auth.token.phone == parentPhone || request.auth.uid == parentPhone);
+    function isOwner(userId) {
+      return isLoggedIn() && request.auth.uid == userId;
     }
 
-    // ====== Public Academy Metadata (Read-Only) ======
-    match /academy/public {
+    function isValidString(val, maxLen) {
+      return val is string && val.size() > 0 && val.size() <= maxLen;
+    }
+
+    // ── Courses: public read, admin write ──────────────────────────────────
+    match /courses/{doc} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
 
-    // ====== Parent Accounts Collection ======
-    match /parents/{parentPhone} {
-      allow read: if isParentOwner(parentPhone) || isTeacher();
-      allow write: if isParentOwner(parentPhone) || isTeacher();
+    // ── Lessons: public read for isPublic, auth read for others ───────────
+    match /lessons/{lessonId} {
+      allow read: if resource.data.isPublic == true || isLoggedIn();
+      allow write: if isAdmin();
     }
 
-    // ====== Student Profiles & Multi-Child Progress Data ======
+    // ── Reviews: public read (approved only), public create, admin moderate
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' || isAdmin();
+
+      allow create: if
+        request.resource.data.keys().hasAll(['authorName', 'rating', 'comment', 'status', 'createdAt']) &&
+        request.resource.data.status == 'pending' &&
+        isValidString(request.resource.data.authorName, 100) &&
+        isValidString(request.resource.data.comment, 500) &&
+        request.resource.data.rating is number &&
+        request.resource.data.rating >= 1 &&
+        request.resource.data.rating <= 5 &&
+        !('approved' in request.resource.data);
+
+      allow update, delete: if isAdmin();
+    }
+
+    // ── Contacts: public create only, admin reads ─────────────────────────
+    match /contacts/{contactId} {
+      allow create: if
+        request.resource.data.keys().hasAll(['name', 'phone', 'message', 'createdAt']) &&
+        isValidString(request.resource.data.name, 100) &&
+        isValidString(request.resource.data.phone, 20) &&
+        isValidString(request.resource.data.message, 1000);
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── Users: owner reads/updates own, admin reads all ───────────────────
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+
+      allow create: if
+        isLoggedIn() &&
+        request.auth.uid == userId &&
+        request.resource.data.keys().hasAll(['name', 'phone', 'role', 'approved', 'approvalStatus']);
+
+      // Owner can update profile but NOT role/approved/approvalStatus
+      allow update: if
+        isAdmin() ||
+        (isOwner(userId) &&
+         !('role' in request.resource.data.diff(resource.data).affectedKeys()) &&
+         !('approved' in request.resource.data.diff(resource.data).affectedKeys()) &&
+         !('approvalStatus' in request.resource.data.diff(resource.data).affectedKeys()));
+
+      allow delete: if isAdmin();
+    }
+
+    // ── Students: parent reads/adds own children, admin reads all ─────────
     match /students/{studentId} {
-      // Students read their own profile; Parents read linked children; Teachers read all
-      allow read: if isStudentOwner(studentId) || isTeacher() || (isAuthenticated() && resource.data.parentPhone == request.auth.token.phone);
-      
-      // Students update progress keys; Parents update linked children; Teachers update all
-      allow update: if (isStudentOwner(studentId) 
-                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['unlockedLessons', 'lastActiveAt']))
-                   || (isAuthenticated() && resource.data.parentPhone == request.auth.token.phone)
-                   || isTeacher();
-                   
-      allow create, delete: if isTeacher();
+      allow read: if
+        isLoggedIn() &&
+        (resource == null || resource.data.parentId == request.auth.uid || isAdmin());
+
+      allow create: if
+        isLoggedIn() &&
+        request.resource.data.parentId == request.auth.uid;
+
+      allow update: if
+        isAdmin() ||
+        (isLoggedIn() && resource.data.parentId == request.auth.uid);
+
+      allow delete: if isAdmin();
     }
 
-    // ====== Testimonials Submission & Moderation Collections ======
-    match /testimonials_pending/{docId} {
-      allow create: if true; // Public submission allowed
-      allow read, update, delete: if isTeacher(); // Moderation restricted to teachers
+    // ── Progress: owner reads/writes own ──────────────────────────────────
+    match /progress/{docId} {
+      allow read: if
+        isLoggedIn() &&
+        (resource == null || resource.data.userId == request.auth.uid);
+
+      allow write: if
+        isLoggedIn() &&
+        request.resource.data.userId == request.auth.uid;
     }
 
-    // ====== Free Trial Lead Capture Collection ======
-    match /leads/{leadId} {
-      allow create: if true; // Public lead capture allowed
-      allow read, update, delete: if isTeacher();
+    // ── Submissions: owner creates/reads own, admin manages all ───────────
+    match /submissions/{subId} {
+      allow read: if
+        isLoggedIn() &&
+        (resource.data.studentId == request.auth.uid || isAdmin());
+
+      allow create: if
+        isLoggedIn() &&
+        request.resource.data.studentId == request.auth.uid &&
+        request.resource.data.status == 'pending';
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
-    match /testimonials/{docId} {
-      allow read: if true; // Public view
-      allow write: if isTeacher();
+    // ── Audit logs: admin only ─────────────────────────────────────────────
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update, delete: if false;
     }
 
-    // ====== Rate Limit Logs (Server-Side Only) ======
-    match /auth_attempts/{docId} {
-      allow read, write: if false;
-    }
-
-    // ====== Global Default Lock ======
+    // ── Deny everything else by default ───────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }

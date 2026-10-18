@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchApi } from '../../lib/api';
+import { getAllUsers, updateUserApproval, renewSubscription, revokeSubscription } from '../../services/adminService';
 import {
   UserCheck,
   UserX,
@@ -44,10 +44,9 @@ export const AdminApprovalsPage: React.FC = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetchApi('/admin/users');
-      if (res.success && res.data) {
-        setUsers(res.data);
-      }
+      const data = await getAllUsers();
+      // Map uid to id for backward compat with existing JSX
+      setUsers(data.map((u) => ({ ...u, id: u.uid })) as any);
     } catch (_err) {
       // Handled gracefully
     } finally {
@@ -76,22 +75,15 @@ export const AdminApprovalsPage: React.FC = () => {
   ) => {
     setActionLoadingId(userId);
     try {
-      const res = await fetchApi(`/admin/users/${userId}/approval`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status, subscriptionStart, subscriptionEnd }),
-      });
-
-      if (res.success) {
-        fetchUsers();
-        const statusLabel =
-          status === 'approved'
-            ? 'تم اعتماد وتفعيل وصول الطالب للدروس بنجاح'
-            : status === 'rejected'
-            ? 'تم سحب وإلغاء صلاحية الطالب وقفل الدروس'
-            : 'تم إعادة حالة الحساب إلى قيد المراجعة';
-
-        triggerToast(statusLabel);
-      }
+      await updateUserApproval(userId, status, subscriptionStart, subscriptionEnd);
+      fetchUsers();
+      const statusLabel =
+        status === 'approved'
+          ? 'تم اعتماد وتفعيل وصول الطالب للدروس بنجاح'
+          : status === 'rejected'
+          ? 'تم سحب وإلغاء صلاحية الطالب وقفل الدروس'
+          : 'تم إعادة حالة الحساب إلى قيد المراجعة';
+      triggerToast(statusLabel);
     } catch (err: any) {
       alert(err.message || 'فشل تحديث حالة الصلاحية');
     } finally {
@@ -111,19 +103,12 @@ export const AdminApprovalsPage: React.FC = () => {
   const handleSaveRenewal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUserForDates) return;
-
     setActionLoadingId(selectedUserForDates.id);
     try {
-      const res = await fetchApi(`/admin/users/${selectedUserForDates.id}/renew`, {
-        method: 'POST',
-        body: JSON.stringify({ newEndDate: modalEndDate }),
-      });
-
-      if (res.success) {
-        setSelectedUserForDates(null);
-        fetchUsers();
-        triggerToast(`تم تجديد اشتراك الطالب ${selectedUserForDates.name} بنجاح حتى ${modalEndDate}`);
-      }
+      await renewSubscription(selectedUserForDates.id, modalEndDate);
+      setSelectedUserForDates(null);
+      fetchUsers();
+      triggerToast(`تم تجديد اشتراك الطالب ${selectedUserForDates.name} بنجاح حتى ${modalEndDate}`);
     } catch (err: any) {
       alert(err.message || 'فشل تجديد الاشتراك');
     } finally {
@@ -133,20 +118,12 @@ export const AdminApprovalsPage: React.FC = () => {
 
   // Revoke Subscription Action
   const handleRevoke = async (userId: string, userName: string) => {
-    if (!window.confirm(`هل أنت متأكد من سحب وإلغاء اشتراك الطالب (${userName}) وقفل كافة الدروس فوراً؟`)) {
-      return;
-    }
-
+    if (!window.confirm(`هل أنت متأكد من سحب وإلغاء اشتراك الطالب (${userName}) وقفل كافة الدروس فوراً؟`)) return;
     setActionLoadingId(userId);
     try {
-      const res = await fetchApi(`/admin/users/${userId}/revoke`, {
-        method: 'POST',
-      });
-
-      if (res.success) {
-        fetchUsers();
-        triggerToast(`تم سحب وإلغاء اشتراك الطالب ${userName} وقفل الدروس`);
-      }
+      await revokeSubscription(userId);
+      fetchUsers();
+      triggerToast(`تم سحب وإلغاء اشتراك الطالب ${userName} وقفل الدروس`);
     } catch (err: any) {
       alert(err.message || 'فشل سحب الاشتراك');
     } finally {

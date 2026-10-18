@@ -76,6 +76,7 @@ dist/
 *.env
 *.pem
 *.key
+service-account.json
 *.cert
 dump/
 backups/

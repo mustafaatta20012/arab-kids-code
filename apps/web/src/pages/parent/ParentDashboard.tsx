@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fetchApi } from '../../lib/api';
 import { UserPlus, Award, Flame, CheckCircle2, ShieldCheck, Sparkles, Lock } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
+import { useAuthStore } from '../../lib/auth';
+import { getMyChildren, addChild } from '../../services/studentService';
 
 export const ParentDashboard: React.FC = () => {
-  const [data, setData] = useState<any>(null);
+  const { user } = useAuthStore();
+  const [children, setChildrenData] = useState<any[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAddChildModal, setShowAddChildModal] = useState(false);
@@ -12,40 +14,32 @@ export const ParentDashboard: React.FC = () => {
   const [newChildName, setNewChildName] = useState('');
   const [newChildBirthYear, setNewChildBirthYear] = useState(2014);
 
-  useEffect(() => {
-    fetchApi('/me/children')
-      .then((res) => {
-        if (res.success && res.data) {
-          setData(res.data);
-          if (res.data.children && res.data.children.length > 0) {
-            setSelectedChildId(res.data.children[0].id);
-          }
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const loadChildren = async () => {
+    if (!user?.uid) return;
+    setLoading(true);
+    try {
+      const data = await getMyChildren(user.uid);
+      setChildrenData(data);
+      if (data.length > 0) setSelectedChildId(data[0].id);
+    } catch (_e) {}
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { loadChildren(); }, [user?.uid]);
 
   const handleAddChild = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.uid) return;
     try {
-      const res = await fetchApi('/me/children', {
-        method: 'POST',
-        body: JSON.stringify({ displayName: newChildName, birthYear: newChildBirthYear }),
-      });
-      if (res.success) {
-        setShowAddChildModal(false);
-        setNewChildName('');
-        // Refresh children list
-        const refreshed = await fetchApi('/me/children');
-        if (refreshed.data) setData(refreshed.data);
-      }
+      await addChild(user.uid, { displayName: newChildName, birthYear: newChildBirthYear });
+      setShowAddChildModal(false);
+      setNewChildName('');
+      loadChildren();
     } catch (err: any) {
       alert(err.message || 'فشل إضافة الطفل');
     }
   };
 
-  const children = data?.children || fallbackDemoChildren;
   const selectedChild = children.find((c: any) => c.id === selectedChildId) || children[0];
 
   return (
@@ -229,25 +223,5 @@ export const ParentDashboard: React.FC = () => {
   );
 };
 
-const fallbackDemoChildren = [
-  {
-    id: 'demo_child_1',
-    displayName: 'ياسين أحمد',
-    birthYear: 2014,
-    level: 2,
-    xp: 250,
-    streakDays: 3,
-    progress: { completedLessonsCount: 1, totalLessonsCount: 30, percentage: 3 },
-    subscription: { status: 'active', plan: 'full_access' },
-  },
-  {
-    id: 'demo_child_2',
-    displayName: 'فريدة أحمد',
-    birthYear: 2016,
-    level: 1,
-    xp: 50,
-    streakDays: 1,
-    progress: { completedLessonsCount: 1, totalLessonsCount: 30, percentage: 3 },
-    subscription: null,
-  },
-];
+
+

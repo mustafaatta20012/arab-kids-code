@@ -1,32 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, UserCheck, FolderKanban, Star, ShieldCheck, LogOut, Code2 } from 'lucide-react';
-import { fetchApi } from '../../lib/api';
 import { Seo } from '../../components/common/Seo';
+import { useAuthStore, isAdmin } from '../../lib/auth';
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const { user, loading, logout } = useAuthStore();
+  const authorized = user && isAdmin(user);
 
   useEffect(() => {
-    fetchApi('/auth/me')
-      .then((res) => {
-        if (res.success && res.data) {
-          const role = res.data.role;
-          if (role === 'teacher' || role === 'super_admin') {
-            setAuthorized(true);
-          } else {
-            navigate('/login');
-          }
-        } else {
-          navigate('/login');
-        }
-      })
-      .catch(() => {
-        navigate('/login');
-      });
-  }, [navigate]);
+    if (!loading && (!user || !isAdmin(user))) {
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
 
   const navItems = [
     { path: '/admin', label: 'التحليلات العامة', icon: LayoutDashboard },
@@ -37,7 +25,7 @@ export const AdminLayout: React.FC = () => {
     { path: '/admin/audit', label: 'سجل تدقيق النظام', icon: ShieldCheck },
   ];
 
-  if (authorized === null) {
+  if (loading || !authorized) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white font-bold text-sm">
         جاري التحقق من صلاحيات المعلم...
@@ -91,13 +79,13 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         <div className="pt-6 border-t border-slate-800">
-          <Link
-            to="/login"
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
             className="flex items-center gap-2 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span>تسجيل الخروج من الإدارة</span>
-          </Link>
+          </button>
         </div>
       </aside>
 

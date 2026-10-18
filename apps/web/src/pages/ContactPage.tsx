@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { fetchApi } from '../lib/api';
 import { MessageSquare, Phone, Send, CheckCircle2, Facebook } from 'lucide-react';
 import { Seo } from '../components/common/Seo';
+import { submitContact } from '../services/contactService';
 
 export const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', phone: '', message: '' });
@@ -12,10 +12,7 @@ export const ContactPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await fetchApi('/public/contact', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-      });
+      await submitContact(formData);
       setSubmitted(true);
     } catch (_err) {
       alert('فشل إرسال الرسالة، يرجى المحاولة مرة أخرى أو التواصل عبر واتساب.');
