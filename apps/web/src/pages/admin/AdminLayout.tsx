@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, UserCheck, FolderKanban, Star, ShieldCheck, LogOut, Code2 } from 'lucide-react';
+import { LayoutDashboard, Users, UserCheck, FolderKanban, Star, ShieldCheck, LogOut, Code2, BookOpen } from 'lucide-react';
 import { Seo } from '../../components/common/Seo';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,6 +13,7 @@ export const AdminLayout: React.FC = () => {
   const navItems = [
     { path: '/admin',             label: 'التحليلات العامة',           icon: LayoutDashboard },
     { path: '/admin/approvals',   label: 'طلبات الوصول والموافقات',   icon: UserCheck },
+    { path: '/admin/lessons',     label: 'إدارة الدروس والفيديوهات',  icon: BookOpen },
     { path: '/admin/students',    label: 'إدارة الطلاب والعائلات',    icon: Users },
     { path: '/admin/submissions', label: 'تصحيح المشروعات',           icon: FolderKanban },
     { path: '/admin/reviews',     label: 'طابور مراجعة التقييمات',    icon: Star },

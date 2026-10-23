@@ -306,13 +306,34 @@ export const StudentLessonPlayer: React.FC = () => {
 
       {/* Video & Scratch Sandbox Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Protected Signed Video Player */}
+        {/* Video Player — supports YouTube iframes and direct MP4 links */}
         <div className="lg:col-span-8 bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
           <div className="aspect-video w-full">
-            <video controls autoPlay className="w-full h-full object-cover">
-              <source src={lesson?.videoUrl || '/images/النظام_الثنائي.mp4'} type="video/mp4" />
-              متصفحك لا يدعم الفيديو.
-            </video>
+            {(() => {
+              const url: string = lesson?.videoUrl || '';
+              const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
+              // Convert watch URL to embed URL if needed
+              const embedUrl = isYoutube
+                ? url
+                    .replace('watch?v=', 'embed/')
+                    .replace('youtu.be/', 'www.youtube.com/embed/')
+                    .replace('youtube.com/embed/', 'youtube.com/embed/')
+                : '';
+              return isYoutube ? (
+                <iframe
+                  src={`${embedUrl}?rel=0&modestbranding=1`}
+                  className="w-full h-full"
+                  title={lesson?.title?.ar || lesson?.title || 'درس'}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video controls autoPlay className="w-full h-full object-cover">
+                  <source src={url || '/images/النظام_الثنائي.mp4'} type="video/mp4" />
+                  متصفحك لا يدعم الفيديو.
+                </video>
+              );
+            })()}
           </div>
         </div>
 

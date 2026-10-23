@@ -43,6 +43,7 @@ import { AdminSubmissionsPage } from './pages/admin/AdminSubmissionsPage';
 import { AdminReviewsPage }    from './pages/admin/AdminReviewsPage';
 import { AdminAuditLogsPage }  from './pages/admin/AdminAuditLogsPage';
 import { AdminRestorePage }    from './pages/admin/AdminRestorePage';
+import { AdminLessonsPage }    from './pages/admin/AdminLessonsPage';
 
 const queryClient = new QueryClient();
 
@@ -97,6 +98,7 @@ export const App: React.FC = () => {
                 <Route index element={<AdminAnalyticsPage />} />
                 <Route path="approvals"  element={<AdminApprovalsPage />} />
                 <Route path="students"   element={<AdminStudentsPage />} />
+                <Route path="lessons"    element={<AdminLessonsPage />} />
                 <Route path="submissions" element={<AdminSubmissionsPage />} />
                 <Route path="reviews"    element={<AdminReviewsPage />} />
                 <Route path="audit"      element={<AdminAuditLogsPage />} />
