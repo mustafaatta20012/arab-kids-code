@@ -42,6 +42,7 @@ import { AdminStudentsPage }   from './pages/admin/AdminStudentsPage';
 import { AdminSubmissionsPage } from './pages/admin/AdminSubmissionsPage';
 import { AdminReviewsPage }    from './pages/admin/AdminReviewsPage';
 import { AdminAuditLogsPage }  from './pages/admin/AdminAuditLogsPage';
+import { AdminRestorePage }    from './pages/admin/AdminRestorePage';
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,9 @@ export const App: React.FC = () => {
                 <Route path="reviews"    element={<AdminReviewsPage />} />
                 <Route path="audit"      element={<AdminAuditLogsPage />} />
               </Route>
+
+              {/* ── Admin restore — hidden, no auth guard (needs password) ── */}
+              <Route path="/admin-restore" element={<AdminRestorePage />} />
 
               {/* ── Legacy redirects ─────────────────────────────────────── */}
               <Route path="/lesson1.html"  element={<Navigate to="/lessons/free" replace />} />

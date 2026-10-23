@@ -41,8 +41,36 @@ export const registerParent = async (input: {
   // Use phone as email if no @, or use phone@arabkids.app as synthetic email
   const email = `${input.phone.replace(/\D/g, '')}@arabkids.app`;
 
-  const credential = await createUserWithEmailAndPassword(auth, email, input.password);
-  const uid = credential.user.uid;
+  let uid: string;
+
+  try {
+    // ── Try creating a brand-new Auth account ──────────────────────────────
+    const credential = await createUserWithEmailAndPassword(auth, email, input.password);
+    uid = credential.user.uid;
+  } catch (err: any) {
+    if (err.code !== 'auth/email-already-in-use') throw err;
+
+    // ── Auth account exists — check if Firestore doc was deleted ──────────
+    // Try signing in with the supplied password to get the uid
+    let existingUid: string;
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, input.password);
+      existingUid = cred.user.uid;
+    } catch {
+      // Password is wrong — the account truly exists with a different password
+      throw err; // re-throw original email-already-in-use error
+    }
+
+    // Check if the Firestore document still exists
+    const snap = await getDoc(doc(db, 'users', existingUid));
+    if (snap.exists()) {
+      // Document exists → genuinely a duplicate registration
+      throw err;
+    }
+
+    // Document was deleted → re-create it for this uid
+    uid = existingUid;
+  }
 
   const profile: Omit<UserProfile, 'uid'> = {
     name:             input.name,
@@ -61,6 +89,46 @@ export const registerParent = async (input: {
     ...profile,
     createdAt: serverTimestamp(),
   });
+
+  return { uid, ...profile };
+};
+
+// ── Restore / create admin profile ────────────────────────────────────────
+/**
+ * Call this once to (re)create a super_admin Firestore document for an
+ * existing Firebase Auth account when the Firestore doc was accidentally
+ * deleted. The account must already exist in Firebase Auth.
+ */
+export const restoreAdminProfile = async (
+  phone: string,
+  password: string,
+  name: string = 'مصطفى عطا',
+): Promise<UserProfile> => {
+  const email = phone.includes('@')
+    ? phone
+    : `${phone.replace(/\D/g, '')}@arabkids.app`;
+
+  const credential = await signInWithEmailAndPassword(auth, email, password);
+  const uid = credential.user.uid;
+
+  const profile: Omit<UserProfile, 'uid'> = {
+    name,
+    email,
+    phone,
+    role:             'super_admin',
+    approved:         true,
+    approvalStatus:   'approved',
+    status:           'active',
+    subscriptionStart: null,
+    subscriptionEnd:   null,
+    createdAt:        new Date().toISOString(),
+  };
+
+  await setDoc(
+    doc(db, 'users', uid),
+    { ...profile, createdAt: serverTimestamp() },
+    { merge: false }, // overwrite completely
+  );
 
   return { uid, ...profile };
 };
@@ -89,7 +157,13 @@ export const loginWithPhone = async (
   );
 
   const profile = await getUserProfile(uid);
-  if (!profile) throw new Error('لم يتم العثور على بيانات المستخدم');
+  if (!profile) {
+    // Auth succeeded but Firestore document was deleted.
+    // Throw a typed error so the UI can show a helpful message.
+    const e: any = new Error('profile-not-found');
+    e.code = 'auth/profile-not-found';
+    throw e;
+  }
   return profile;
 };
 

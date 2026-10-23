@@ -10,6 +10,8 @@ const mapAuthError = (code: string): string => {
     return 'رقم الهاتف أو كلمة المرور غير صحيحة';
   if (code.includes('user-not-found'))
     return 'لا يوجد حساب بهذا الرقم، يرجى إنشاء حساب جديد';
+  if (code.includes('profile-not-found'))
+    return 'تم التحقق من الهوية بنجاح، لكن بيانات حسابك في قاعدة البيانات محذوفة. يُرجى استخدام صفحة استعادة الإدمن على /admin-restore';
   if (code.includes('too-many-requests'))
     return 'تم تجاوز عدد المحاولات، يرجى الانتظار قليلاً ثم المحاولة مجدداً';
   if (code.includes('network-request-failed'))
