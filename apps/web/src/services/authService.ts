@@ -95,9 +95,9 @@ export const registerParent = async (input: {
 
 // ── Restore / create admin profile ────────────────────────────────────────
 /**
- * Call this once to (re)create a super_admin Firestore document for an
- * existing Firebase Auth account when the Firestore doc was accidentally
- * deleted. The account must already exist in Firebase Auth.
+ * Handles two cases:
+ *  1. Account fully deleted from Firebase Auth → creates brand-new Auth account + Firestore doc
+ *  2. Auth account exists but Firestore doc deleted → signs in + recreates Firestore doc
  */
 export const restoreAdminProfile = async (
   phone: string,
@@ -108,8 +108,24 @@ export const restoreAdminProfile = async (
     ? phone
     : `${phone.replace(/\D/g, '')}@arabkids.app`;
 
-  const credential = await signInWithEmailAndPassword(auth, email, password);
-  const uid = credential.user.uid;
+  let uid: string;
+
+  try {
+    // Case 1: Auth account was fully deleted → create fresh
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    uid = credential.user.uid;
+  } catch (createErr: any) {
+    if (createErr.code !== 'auth/email-already-in-use') throw createErr;
+
+    // Case 2: Auth account still exists → sign in to get uid
+    try {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      uid = credential.user.uid;
+    } catch (signInErr: any) {
+      // Wrong password for the existing account
+      throw signInErr;
+    }
+  }
 
   const profile: Omit<UserProfile, 'uid'> = {
     name,
@@ -124,10 +140,11 @@ export const restoreAdminProfile = async (
     createdAt:        new Date().toISOString(),
   };
 
+  // Always overwrite the Firestore document completely
   await setDoc(
     doc(db, 'users', uid),
     { ...profile, createdAt: serverTimestamp() },
-    { merge: false }, // overwrite completely
+    { merge: false },
   );
 
   return { uid, ...profile };

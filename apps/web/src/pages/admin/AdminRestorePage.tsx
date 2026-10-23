@@ -36,10 +36,10 @@ export const AdminRestorePage: React.FC = () => {
       setTimeout(() => navigate('/admin', { replace: true }), 2000);
     } catch (err: any) {
       const code: string = err.code ?? err.message ?? '';
-      if (code.includes('user-not-found'))
-        setError('لا يوجد حساب Firebase Auth بهذا الرقم. تأكد من الرقم.');
-      else if (code.includes('wrong-password') || code.includes('invalid-credential'))
-        setError('كلمة المرور غير صحيحة.');
+      if (code.includes('wrong-password') || code.includes('invalid-credential'))
+        setError('كلمة المرور غير صحيحة. إذا كان الحساب لا يزال موجوداً في Auth، استخدم كلمة المرور الأصلية.');
+      else if (code.includes('weak-password'))
+        setError('كلمة المرور قصيرة جداً — استخدم 6 أحرف على الأقل.');
       else if (code.includes('network'))
         setError('تعذر الاتصال بالإنترنت.');
       else
