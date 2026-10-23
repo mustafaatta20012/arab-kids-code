@@ -45,7 +45,15 @@ export const updateUserApproval = async (
   const updates: any = {
     approvalStatus: status,
     approved:       status === 'approved',
+    // ✔ This is the field AuthContext reads for lesson access
+    status:         status === 'approved' ? 'active'
+                  : status === 'rejected' ? 'suspended'
+                  : 'pending',
   };
+  if (status === 'approved') {
+    updates.approvedAt = serverTimestamp();
+    updates.approvedBy = auth.currentUser?.uid ?? 'admin';
+  }
   if (subscriptionStart) updates.subscriptionStart = subscriptionStart;
   if (subscriptionEnd)   updates.subscriptionEnd   = subscriptionEnd;
 
@@ -69,6 +77,9 @@ export const renewSubscription = async (
     subscriptionEnd:   newEndDate,
     approvalStatus:    'approved',
     approved:          true,
+    status:            'active',   // ✔ unlock lessons
+    approvedAt:        serverTimestamp(),
+    approvedBy:        auth.currentUser?.uid ?? 'admin',
   });
   await addDoc(collection(db, 'auditLogs'), {
     adminId:   auth.currentUser?.uid ?? 'unknown',
@@ -83,6 +94,7 @@ export const revokeSubscription = async (userId: string): Promise<void> => {
   await updateDoc(doc(db, 'users', userId), {
     approvalStatus: 'rejected',
     approved:       false,
+    status:         'suspended',   // ✔ lock lessons immediately
   });
   await addDoc(collection(db, 'auditLogs'), {
     adminId:   auth.currentUser?.uid ?? 'unknown',
